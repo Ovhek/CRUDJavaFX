@@ -14,11 +14,11 @@
          <children>
             <TableView fx:id="tblProductos">
               <columns>
-                <TableColumn fx:id="columnCodigo" prefWidth="75.0" text="Código" />
-                <TableColumn fx:id="columnNombre" prefWidth="160.79998779296875" text="Nombre" />
-                  <TableColumn fx:id="columnDescripcion" prefWidth="231.20001220703125" text="Descripción" />
-                  <TableColumn fx:id="columnStock" prefWidth="67.20001220703125" text="Stock" />
-                  <TableColumn fx:id="columnPrecio" prefWidth="68.0" text="Precio" />
+                <TableColumn fx:id="columnCodigoPr" prefWidth="75.0" text="Código" />
+                <TableColumn fx:id="columnNombrePr" prefWidth="160.79998779296875" text="Nombre" />
+                  <TableColumn fx:id="columnDescripcionPr" prefWidth="231.20001220703125" text="Descripción" />
+                  <TableColumn fx:id="columnStockPr" prefWidth="67.20001220703125" text="Stock" />
+                  <TableColumn fx:id="columnPrecioPr" prefWidth="68.0" text="Precio" />
               </columns>
             </TableView>
             <HBox fx:id="hBoxProductos" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="16.0">
