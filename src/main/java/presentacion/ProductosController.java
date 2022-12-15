@@ -4,6 +4,7 @@
  */
 package presentacion;
 
+import Utils.LoadFXML;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -71,30 +72,10 @@ public class ProductosController implements Initializable {
 
     @FXML
     void onActionAdd(ActionEvent event) {
-        //Abrir pantalla nueva
-        try {
-            //Creamos el loader y el controlador para trabajar con la pantalla que abriremos 
-            //y traernos parametros
-            FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/presentacion/productosCrearModificar.fxml"));
-
-            //Con root haremos referencia al padre y lo cargaremos
-            //Al hacer esto netBeans nos pedira hacer un try catch 
-            Parent root = loader.load();
-
-            //crearemos el controlador y con el loader cogeremos el controlador de una vista en concreto
-            ProductosCrearModificarController controlador = loader.getController();
-
-            //Creams scene y stage para trabajar con otra pantalla
-            //creamos una escena que vendra del padre
-            Scene scene = new Scene(root);
-            Stage stage = new Stage();
-            //el dialogo lo hacemos modal(significa que cuando yo lo habra, hasta que yo no termine con el no me deje)
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(scene);
-            stage.showAndWait();
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        }
+        
+        //creamos un loader al que le pasaremos la ruta para ir a la pantalla que queremos 
+        LoadFXML loader = new LoadFXML();
+        loader.openNewWindow("/presentacion/productosCrearModificar.fxml");
     }
     
     @FXML
