@@ -10,8 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
-<AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/19" fx:controller="presentacion.PedidosController">
+<AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentacion.PedidosController">
    <children>
       <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
@@ -52,6 +51,9 @@
                               <TableColumn fx:id="columnPedidosFechaEnvio" prefWidth="75.0" text="Fecha de Envio" />
                               <TableColumn fx:id="columnPedidosEmail" prefWidth="75.0" text="Email" />
                           </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
                         </TableView>
                         <HBox spacing="20.0">
                            <children>
@@ -81,6 +83,9 @@
                               <TableColumn fx:id="columnLineaPedidosPrecio" prefWidth="75.0" text="Precio" />
                               <TableColumn fx:id="columnLineaPedidosNumLinea" prefWidth="75.0" text="Num linea" />
                           </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
                         </TableView>
                         <HBox spacing="20.0">
                            <children>
