@@ -4,9 +4,15 @@
  */
 package presentacion;
 
+import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 
 /**
  * FXML Controller class
@@ -18,9 +24,50 @@ public class ProductosCrearModificarController implements Initializable {
     /**
      * Initializes the controller class.
      */
+    
+    @FXML
+    private Button btnAceptar;
+
+    @FXML
+    private Button btnCancelar;
+
+    @FXML
+    private TextArea editDescripcion;
+
+    @FXML
+    private TextField editNombre;
+
+    @FXML
+    private TextField editPrecio;
+
+    @FXML
+    private TextField editStock;
+
+    @FXML
+    private Label txtDescripcion;
+
+    @FXML
+    private Label txtNombre;
+
+    @FXML
+    private Label txtPrecio;
+
+    @FXML
+    private Label txtStock;
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }    
+    }
+
+    /*@FXML
+    void onActionAceptar(ActionEvent event) {
+
+    }
+
+    @FXML
+    void onActionCancelar(ActionEvent event) {
+
+    }*/    
     
 }
