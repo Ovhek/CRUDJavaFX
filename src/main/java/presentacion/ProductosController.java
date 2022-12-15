@@ -97,6 +97,7 @@ public class ProductosController implements Initializable {
         }
     }
 
+    
     @FXML
     void onActionModificar(ActionEvent event) {
     }
