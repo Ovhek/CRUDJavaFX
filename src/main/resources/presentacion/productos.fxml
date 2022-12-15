@@ -12,7 +12,7 @@
    <children>
       <VBox fx:id="vBoxProductos" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <TableView fx:id="tblProductos">
+            <TableView fx:id="tblProductos" VBox.vgrow="ALWAYS">
               <columns>
                 <TableColumn fx:id="columnCodigoPr" prefWidth="75.0" text="Código" />
                 <TableColumn fx:id="columnNombrePr" prefWidth="160.79998779296875" text="Nombre" />
@@ -20,8 +20,11 @@
                   <TableColumn fx:id="columnStockPr" prefWidth="67.20001220703125" text="Stock" />
                   <TableColumn fx:id="columnPrecioPr" prefWidth="68.0" text="Precio" />
               </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
             </TableView>
-            <HBox fx:id="hBoxProductos" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="16.0">
+            <HBox fx:id="hBoxProductos" alignment="CENTER_LEFT" spacing="16.0">
                <children>
                   <Button fx:id="btnAñadir" mnemonicParsing="false" text="Añadir" />
                   <Button fx:id="btnModificar" mnemonicParsing="false" text="Modificar" />
@@ -30,6 +33,9 @@
                <padding>
                   <Insets left="16.0" />
                </padding>
+               <VBox.margin>
+                  <Insets bottom="10.0" top="10.0" />
+               </VBox.margin>
             </HBox>
          </children>
       </VBox>
