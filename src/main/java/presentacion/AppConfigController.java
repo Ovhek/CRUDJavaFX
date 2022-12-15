@@ -79,8 +79,13 @@ public class AppConfigController implements Initializable {
         initListeners();
     }    
 
+    /**
+     * Inicialización de los listener del controlar
+     * 
+     */
     private void initListeners() {
         
+        //Función encargada de comprobar la anchura de la ventana y modificar la posición de los objetos en base a ello.
         layoutAppConfig.sceneProperty().addListener((observableScene, oldScene, newScene) -> {
             if(oldScene == null && newScene != null){
                 
