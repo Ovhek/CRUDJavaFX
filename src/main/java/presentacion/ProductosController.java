@@ -96,7 +96,6 @@ public class ProductosController implements Initializable {
             System.out.println(ex.getMessage());
         }
     }
-
     
     @FXML
     void onActionModificar(ActionEvent event) {
