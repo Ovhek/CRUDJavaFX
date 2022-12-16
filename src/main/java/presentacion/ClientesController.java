@@ -4,8 +4,12 @@
  */
 package presentacion;
 
+import Utils.LoadFXML;
+import aplicacion.Manager;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
 /**
@@ -13,14 +17,26 @@ import javafx.fxml.Initializable;
  *
  * @author Cole
  */
-public class ClientesController implements Initializable {
+public class ClientesController extends PresentationLayer implements Initializable {
 
+    LoadFXML loader = new LoadFXML();
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        Manager.getInstance().addController(this);
     }    
+    
+    @FXML
+    void onActionPedidos(ActionEvent event) {
+        loader.openNewWindow("/presentacion/pedidos.fxml");
+    }
+    
+    @Override
+    public void close() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
 }

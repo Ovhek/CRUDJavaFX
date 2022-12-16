@@ -29,7 +29,7 @@ import javafx.stage.Stage;
  *
  * @author Cole
  */
-public class ProductosController implements Initializable {
+public class ProductosController extends PresentationLayer implements Initializable {
 
     /**
      * Initializes the controller class.
@@ -60,10 +60,6 @@ public class ProductosController implements Initializable {
 
     @FXML
     private TableView<?> tblProductos;
-    @FXML
-    private VBox vBoxProductos;
-    @FXML
-    private HBox hBoxProductos;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -84,5 +80,10 @@ public class ProductosController implements Initializable {
 
     @FXML
     void onActionEliminar(ActionEvent event) {
+    }
+
+    @Override
+    public void close() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

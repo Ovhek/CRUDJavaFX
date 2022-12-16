@@ -27,9 +27,8 @@
             </TableView>
             <HBox alignment="CENTER_LEFT" spacing="32.0">
                <children>
-                  <Button fx:id="btn_add" mnemonicParsing="false" text="Añadir" />
                   <Button fx:id="btn_modificar" mnemonicParsing="false" text="Modificar" />
-                  <Button fx:id="btn_pedidos" mnemonicParsing="false" text="Pedidos" />
+                  <Button fx:id="btn_pedidos" mnemonicParsing="false" onAction="#onActionPedidos" text="Pedidos" />
                   <Button fx:id="btn_eliminar" mnemonicParsing="false" text="Eliminar" />
                </children>
                <padding>

@@ -19,7 +19,7 @@ import javafx.scene.control.TextField;
  *
  * @author bhugo
  */
-public class ProductosCrearModificarController implements Initializable {
+public class ProductosCrearModificarController extends PresentationLayer implements Initializable {
 
     /**
      * Initializes the controller class.
@@ -69,5 +69,10 @@ public class ProductosCrearModificarController implements Initializable {
     void onActionCancelar(ActionEvent event) {
 
     }*/    
+
+    @Override
+    public void close() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
 }

@@ -4,6 +4,7 @@
  */
 package presentacion;
 
+import aplicacion.Manager;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -23,8 +24,9 @@ import javafx.stage.Stage;
  *
  * @author Cole
  */
-public class AppConfigController implements Initializable {
+public class AppConfigController extends PresentationLayer implements Initializable {
 
+    public String test;
     @FXML
     private Button btnAplicar;
 
@@ -35,7 +37,7 @@ public class AppConfigController implements Initializable {
     private TextField editCantidadProductosPredeterminado;
 
     @FXML
-    private TextField editEdadMinimaCliente;
+    public TextField editEdadMinimaCliente;
 
     @FXML
     private TextField editHorasMinimasEnvio;
@@ -76,6 +78,7 @@ public class AppConfigController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        Manager.getInstance().addController(this);
         initListeners();
     }    
 
@@ -106,17 +109,11 @@ public class AppConfigController implements Initializable {
                 });
             }
         });
-        
-        /*stage.getScene().getWindow().widthProperty().addListener((ov,oldVal, newVal) ->{
-            Node vBoxToMove = vBox_2;
-            try{
+    }
 
-            } catch (Exception e){
-                //Este error se produce por hijos duplicados pero no afecta en si a la aplicación
-                System.out.println("Error: " + e.getMessage());
-            }
-        });*/
-
+    @Override
+    public void close() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
 }
