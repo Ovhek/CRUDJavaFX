@@ -1,11 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentacion.ProductosController">
-    
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentacion.ProductosController">
+   <children>
+      <VBox fx:id="vBoxProductos" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <TableView fx:id="tblProductos">
+              <columns>
+                <TableColumn fx:id="columnCodigoPr" prefWidth="75.0" text="Código" />
+                <TableColumn fx:id="columnNombrePr" prefWidth="160.79998779296875" text="Nombre" />
+                  <TableColumn fx:id="columnDescripcionPr" prefWidth="231.20001220703125" text="Descripción" />
+                  <TableColumn fx:id="columnStockPr" prefWidth="67.20001220703125" text="Stock" />
+                  <TableColumn fx:id="columnPrecioPr" prefWidth="68.0" text="Precio" />
+              </columns>
+            </TableView>
+            <HBox fx:id="hBoxProductos" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="16.0">
+               <children>
+                  <Button fx:id="btnAñadir" mnemonicParsing="false" text="Añadir" />
+                  <Button fx:id="btnModificar" mnemonicParsing="false" text="Modificar" />
+                  <Button fx:id="btnEliminar" mnemonicParsing="false" text="Eliminar" />
+               </children>
+               <padding>
+                  <Insets left="16.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
 </AnchorPane>
