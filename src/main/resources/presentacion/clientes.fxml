@@ -8,19 +8,18 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
-<AnchorPane id="AnchorPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/19" fx:controller="presentacion.ClientesController">
+<AnchorPane id="AnchorPane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentacion.ClientesController">
    <children>
       <VBox prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <TableView fx:id="tbview_cliente" prefHeight="355.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
               <columns>
-                <TableColumn prefWidth="75.0" text="Nombre" />
-                <TableColumn prefWidth="140.66665649414062" text="Email" />
-                  <TableColumn prefWidth="103.3333740234375" text="Telefono" />
-                  <TableColumn prefWidth="93.33331298828125" text="F.Nacimiento" />
-                  <TableColumn prefWidth="103.33331298828125" text="Id.Targeta" />
-                  <TableColumn prefWidth="86.0" text="Saldo" />
+                <TableColumn fx:id="colum_clienteNombre" prefWidth="75.0" text="Nombre" />
+                <TableColumn fx:id="colum_clienteEmail" prefWidth="140.66665649414062" text="Email" />
+                  <TableColumn fx:id="colum_clienteTelf" prefWidth="103.3333740234375" text="Telefono" />
+                  <TableColumn fx:id="colum_clienteNac" prefWidth="93.33331298828125" text="F.Nacimiento" />
+                  <TableColumn fx:id="colum_clienteTargeta" prefWidth="103.33331298828125" text="Id.Targeta" />
+                  <TableColumn fx:id="colum_clienteSaldo" prefWidth="86.0" text="Saldo" />
               </columns>
             </TableView>
             <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="600.0" spacing="32.0">
