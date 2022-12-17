@@ -73,14 +73,14 @@
                         </HBox>
                         <HBox spacing="10.0">
                            <children>
-                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Max Número de demandas por pedido" HBox.hgrow="ALWAYS" />
-                              <TextField fx:id="editMaxNumeroDemandasPedido" />
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Máximo de lineas por pedido" HBox.hgrow="ALWAYS" />
+                              <TextField fx:id="editMaxNumeroLineasPorPedido" />
                            </children>
                         </HBox>
                         <HBox spacing="10.0">
                            <children>
-                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Precio Máximo por pedido" HBox.hgrow="ALWAYS" />
-                              <TextField fx:id="editPrecioMaximoPedido" />
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Ordenes máximas por pedido" HBox.hgrow="ALWAYS" />
+                              <TextField fx:id="editOrdenesMaximasPedido" />
                            </children>
                            <VBox.margin>
                               <Insets />
@@ -89,7 +89,7 @@
                         <HBox VBox.vgrow="ALWAYS">
                            <children>
                               <Label maxWidth="1.7976931348623157E308" text="Label" visible="false" HBox.hgrow="ALWAYS" />
-                              <Button fx:id="btnAplicar" mnemonicParsing="false" text="Aplicar" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="btnAplicar" mnemonicParsing="false" onAction="#onActionAddOrUpdate" text="Aplicar" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
                      </children>

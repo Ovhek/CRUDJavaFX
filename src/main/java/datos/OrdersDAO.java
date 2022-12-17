@@ -16,6 +16,7 @@ import java.util.List;
 public class OrdersDAO extends DataLayer implements DAOInterface<Order>{
 
     public OrdersDAO() throws SQLException {
+        super();
     }
 
     
