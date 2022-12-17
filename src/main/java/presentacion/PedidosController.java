@@ -5,9 +5,23 @@
 package presentacion;
 
 import Utils.LoadFXML;
+import Utils.Utils;
+import aplicacion.LogicLayerException;
 import aplicacion.Manager;
+import aplicacion.OrderDetailsLogic;
+import aplicacion.OrdersLogic;
+import aplicacion.modelo.Customer;
+import aplicacion.modelo.Order;
+import aplicacion.modelo.OrderDetails;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.beans.Observable;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,6 +29,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -53,37 +69,34 @@ public class PedidosController extends PresentationLayer implements Initializabl
     private HBox hBoxBottomLayout;
         
     @FXML
-    private TableColumn<?, ?> columnLineaPedidosCantidad;
+    private TableColumn columnLineaPedidosCantidad;
 
     @FXML
-    private TableColumn<?, ?> columnLineaPedidosCodigoProducto;
+    private TableColumn columnLineaPedidosCodigoProducto;
 
     @FXML
-    private TableColumn<?, ?> columnLineaPedidosNombreProducto;
+    private TableColumn columnLineaPedidosNombreProducto;
 
     @FXML
-    private TableColumn<?, ?> columnLineaPedidosNumLinea;
+    private TableColumn columnLineaPedidosNumLinea;
 
     @FXML
-    private TableColumn<?, ?> columnLineaPedidosNumeroPedido;
+    private TableColumn columnLineaPedidosPrecio;
 
     @FXML
-    private TableColumn<?, ?> columnLineaPedidosPrecio;
+    private TableColumn columnPedidosEmail;
 
     @FXML
-    private TableColumn<?, ?> columnPedidosEmail;
+    private TableColumn columnPedidosFechaEnvio;
 
     @FXML
-    private TableColumn<?, ?> columnPedidosFechaEnvio;
+    private TableColumn columnPedidosFechaPedido;
 
     @FXML
-    private TableColumn<?, ?> columnPedidosFechaPedido;
+    private TableColumn columnPedidosFechaRequerida;
 
     @FXML
-    private TableColumn<?, ?> columnPedidosFechaRequerida;
-
-    @FXML
-    private TableColumn<?, ?> columnPedidosID;
+    private TableColumn columnPedidosID;
 
     @FXML
     private HBox hBoxAsVboxContainer;
@@ -92,10 +105,10 @@ public class PedidosController extends PresentationLayer implements Initializabl
     private BorderPane responsiveLayout;
 
     @FXML
-    private TableView<?> tableLineaPedidos;
+    private TableView<OrderDetails> tableLineaPedidos;
 
     @FXML
-    private TableView<?> tablePedidos;
+    private TableView<Order> tablePedidos;
 
     @FXML
     private Label txtEmail;
@@ -112,6 +125,7 @@ public class PedidosController extends PresentationLayer implements Initializabl
     @FXML
     private AnchorPane layoutPedidos;
         
+    private Customer customer = new Customer();
     private LoadFXML loader = new LoadFXML();
     private Manager manager = Manager.getInstance();
     /**
@@ -123,7 +137,48 @@ public class PedidosController extends PresentationLayer implements Initializabl
         initListeners();
     } 
     
-        /**
+    private void initView() {
+        try {
+            this.ordersLogic = new OrdersLogic();
+            this.orderDetailsLogic = new OrderDetailsLogic();
+            List<Order> orders = ordersLogic.getAllByCustomer(customer);
+            orders.forEach( order -> {
+                try {
+                    order.setOrderDetails((ArrayList<OrderDetails>) orderDetailsLogic.getAllByOrderNumber(order));
+                } catch (LogicLayerException ex) {
+                    Utils.showErrorAlert(ex.getMessage());
+                }
+            });
+            
+            ObservableList<Order> observableOrders = FXCollections.observableArrayList(orders);
+            
+            tablePedidos.setItems(observableOrders);
+            columnPedidosEmail.setCellFactory(new PropertyValueFactory("customers_customerEmail"));
+            columnPedidosFechaEnvio.setCellFactory(new PropertyValueFactory("shippedDate"));
+            columnPedidosFechaPedido.setCellFactory(new PropertyValueFactory("orderDate"));
+            columnPedidosFechaRequerida.setCellFactory(new PropertyValueFactory("requiredDate"));
+            columnPedidosID.setCellFactory(new PropertyValueFactory("orderNumber"));
+            
+            
+            columnLineaPedidosCantidad.setCellFactory(new PropertyValueFactory("quantityOrdered"));
+            columnLineaPedidosCodigoProducto.setCellFactory(new PropertyValueFactory("productCode"));
+            //TODO: Obtener el nombre del producto!!
+            columnLineaPedidosNombreProducto.setCellFactory(new PropertyValueFactory(""));
+            columnLineaPedidosNumLinea.setCellFactory(new PropertyValueFactory("orderLineNumber"));
+            columnLineaPedidosPrecio.setCellFactory(new PropertyValueFactory("priceEach"));
+
+           
+        } catch (LogicLayerException ex) {
+            Utils.showErrorAlert(ex.getMessage());
+        }
+    }
+    
+    public void setCustomerData(Customer customer){
+        this.customer = customer;
+        initView();
+    }
+    
+     /**
      * Inicialización de los listener del controlar
      * 
      */
@@ -152,6 +207,13 @@ public class PedidosController extends PresentationLayer implements Initializabl
     }
     
     @FXML
+    void onMouseClickedObtainDetails(MouseEvent event) {
+        Order selectedOrder = tablePedidos.getSelectionModel().getSelectedItem();
+        ObservableList<OrderDetails> observableDetails = FXCollections.observableArrayList(selectedOrder.getOrderDetails());
+        tableLineaPedidos.setItems(observableDetails);
+    }
+    
+    @FXML
     void onActionAddLineaPedido(ActionEvent event) {
         loader.openNewWindow("/presentacion/crearModificarLineaPedidos.fxml");
     }
@@ -163,12 +225,20 @@ public class PedidosController extends PresentationLayer implements Initializabl
 
     @FXML
     void onActionDelLineaPedido(ActionEvent event) {
-
+        try {
+            orderDetailsLogic.delete(tableLineaPedidos.getSelectionModel().getSelectedItem());
+        } catch (LogicLayerException ex) {
+           Utils.showErrorAlert(ex.getMessage());
+        }
     }
 
     @FXML
     void onActionDelPedido(ActionEvent event) {
-
+        try {
+            ordersLogic.delete(tablePedidos.getSelectionModel().getSelectedItem());
+        } catch (LogicLayerException ex) {
+           Utils.showErrorAlert(ex.getMessage());
+        }
     }
 
     @FXML
@@ -185,5 +255,4 @@ public class PedidosController extends PresentationLayer implements Initializabl
     public void close() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
 }

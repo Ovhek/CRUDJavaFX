@@ -55,34 +55,12 @@ public class AppConfigDAO extends DataLayer implements DAOInterface<AppConfig>{
     }
 
     /**
-     * Función encargada de actualizar el appConfig
+     * Función no aplicable pues no se puede actualizar una tabla sin clave primaria. En este caso primero se borra el registro y después se añade el nuevo.
      * @param t objeto appConfig a modificar
      */
     @Override
     public void update(AppConfig t) throws SQLException {
-       AppConfig appConfToUpdate = getAppConfig();
-       
-       Statement sentencia;
-       sentencia = this.getCon().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-       
-       sentencia.executeQuery("select * from appConfig limit 1");
-        // Ejecución de la consulta
-       ResultSet result = sentencia.getResultSet();
-        
-       if(result.next()){
-           result.updateFloat("defaultCreditLimit", t.getDefaultCreditLimit());
-           result.updateInt("defaultQuantityInStock", t.getDefaultQuantityInStock());
-           result.updateInt("defaultQuantityOrdered", t.getDefaultQuantityOrdered());
-           result.updateInt("defaultProductBenefit", t.getDefaultProductBanefit());
-           result.updateInt("minShippingHours", t.getMinShippingHours());
-           result.updateInt("minCustomerAge", t.getMinCustomerAge());
-           result.updateInt("maxLinesPerOrder", t.getMaxLinesPerOrder());
-           result.updateFloat("maxOrderAmount", t.getMaxOrderAmount());
-            
-           result.updateRow();
-            
-       }
-       
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
