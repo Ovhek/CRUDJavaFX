@@ -131,6 +131,12 @@
                                     <Button fx:id="btnAddLineaPedido" mnemonicParsing="false" onAction="#onActionAddLineaPedido" text="Añadir" />
                                     <Button fx:id="btnModLineaPedido" mnemonicParsing="false" onAction="#onActionModLineaPedido" text="Modificar" />
                                     <Button fx:id="btnDelLineaPedido" mnemonicParsing="false" onAction="#onActionDelLineaPedido" text="Eliminar" />
+                                    <Label maxHeight="1.7976931348623157E308" text="Importe Total:">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="txtImporteTotal" maxHeight="1.7976931348623157E308" text="{importe}" />
                                  </children>
                                  <VBox.margin>
                                     <Insets top="20.0" />

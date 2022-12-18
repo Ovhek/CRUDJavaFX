@@ -140,9 +140,9 @@ public class AppConfigController extends PresentationLayer implements Initializa
     private void initView() {
         try {
             this.appConfigLogic = new AppConfigLogic();
-            
             appConfig = appConfigLogic.getAppConfig();
-            
+            this.appConfigLogic.close();
+                    
             if(appConfig == null) return;
             
             editBeneficioPredetermiando.setText(""+ appConfig.getDefaultProductBanefit());
@@ -169,8 +169,11 @@ public class AppConfigController extends PresentationLayer implements Initializa
             return;
         }
         try {
+            this.appConfigLogic = new AppConfigLogic();
+            appConfig = appConfigLogic.getAppConfig();
             appConfigLogic.delete(appConfig);
             appConfigLogic.save(buildAppConfig());
+            this.appConfigLogic.close();
         } catch (LogicLayerException ex) {
             Utils.showErrorAlert(ex.getMessage());
         }

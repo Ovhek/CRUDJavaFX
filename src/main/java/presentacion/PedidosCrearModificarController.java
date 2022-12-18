@@ -116,6 +116,7 @@ public class PedidosCrearModificarController extends PresentationLayer implement
             //ObservableList customerEmails = FXCollections.observableArrayList();
             //añadirla al combobox
             //comboEmailCliente.setItems();
+            //this.customersLogic.close();
             return;
         }
 
@@ -139,6 +140,7 @@ public class PedidosCrearModificarController extends PresentationLayer implement
             this.ordersLogic = new OrdersLogic();
             if(order == null) ordersLogic.save(constructOrder());
             else ordersLogic.update(constructOrder());
+            this.ordersLogic.close();
         } catch (LogicLayerException ex) {
             Utils.showErrorAlert("Error: " + ex.getMessage());
         }

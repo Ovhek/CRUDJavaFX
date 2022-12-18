@@ -67,9 +67,15 @@ public class AppConfigLogic extends LogicLayer{
             throw new LogicLayerException("Error capa logica: " + ex.getMessage());
         }
     }
+    
+    // Cerramos la conexión
     @Override
     public void close() throws LogicLayerException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            this.getAppConfigDAO().close();
+        } catch (SQLException ex) {
+            throw new LogicLayerException("Error capa logica: " + ex.getMessage());
+        }
     }
     
 }

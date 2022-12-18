@@ -131,6 +131,12 @@ public class PedidosController extends PresentationLayer implements Initializabl
     private Customer customer = new Customer();
     private LoadFXML loader = new LoadFXML();
     private Manager manager = Manager.getInstance();
+    private float importeTotal = 0f;
+
+    public float getImporteTotal() {
+        return importeTotal;
+    }
+
     /**
      * Initializes the controller class.
      */
@@ -149,9 +155,11 @@ public class PedidosController extends PresentationLayer implements Initializabl
             this.ordersLogic = new OrdersLogic();
             this.orderDetailsLogic = new OrderDetailsLogic();
             List<Order> orders = ordersLogic.getAllByCustomer(customer);
+            ordersLogic.close();
             orders.forEach( order -> {
                 try {
                     order.setOrderDetails((ArrayList<OrderDetails>) orderDetailsLogic.getAllByOrderNumber(order));
+                    orderDetailsLogic.close();
                 } catch (LogicLayerException ex) {
                     Utils.showErrorAlert(ex.getMessage());
                 }
@@ -232,7 +240,9 @@ public class PedidosController extends PresentationLayer implements Initializabl
     @FXML
     void onMouseClickedObtainDetails(MouseEvent event) {
         Order selectedOrder = tablePedidos.getSelectionModel().getSelectedItem();
-        ObservableList<OrderDetails> observableDetails = FXCollections.observableArrayList(selectedOrder.getOrderDetails());
+        ArrayList<OrderDetails> orderDetails = selectedOrder.getOrderDetails();
+        orderDetails.forEach(orderDetail -> importeTotal+= orderDetail.getQuantityOrdered()*orderDetail.getPriceEach());
+        ObservableList<OrderDetails> observableDetails = FXCollections.observableArrayList(orderDetails);
         tableLineaPedidos.setItems(observableDetails);
     }
     
@@ -279,7 +289,9 @@ public class PedidosController extends PresentationLayer implements Initializabl
     @FXML
     void onActionDelLineaPedido(ActionEvent event) {
         try {
+            this.orderDetailsLogic = new OrderDetailsLogic();
             orderDetailsLogic.delete(tableLineaPedidos.getSelectionModel().getSelectedItem());
+            this.orderDetailsLogic.close();
         } catch (LogicLayerException ex) {
            Utils.showErrorAlert(ex.getMessage());
         }
@@ -288,7 +300,9 @@ public class PedidosController extends PresentationLayer implements Initializabl
     @FXML
     void onActionDelPedido(ActionEvent event) {
         try {
+            this.ordersLogic = new OrdersLogic();
             ordersLogic.delete(tablePedidos.getSelectionModel().getSelectedItem());
+            this.ordersLogic.close();
         } catch (LogicLayerException ex) {
            Utils.showErrorAlert(ex.getMessage());
         }

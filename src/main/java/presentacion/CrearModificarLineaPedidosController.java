@@ -69,9 +69,11 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
      */
     private void initView() {
         if(orderDetails == null){
+            
             //TODO: Obtener lista de productos y añadir su nombre a un observablelist y añadirlas al combobox
             //ObservableList customerEmails = FXCollections.observableArrayList();
             //comboCodProducto.setItems();
+            //this.productsLogic.close();
             return;
         }
         
@@ -92,6 +94,7 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
             this.orderDetailsLogic = new OrderDetailsLogic();
             if(orderDetails == null) orderDetailsLogic.save(constructOrderDetails());
             else orderDetailsLogic.update(constructOrderDetails());
+            this.orderDetailsLogic.close();
         } catch (LogicLayerException ex) {
             Utils.showErrorAlert("Error: " + ex.getMessage());
         }
