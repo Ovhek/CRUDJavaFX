@@ -13,6 +13,7 @@ import aplicacion.OrdersLogic;
 import aplicacion.modelo.Customer;
 import aplicacion.modelo.Order;
 import aplicacion.modelo.OrderDetails;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -139,6 +142,10 @@ public class PedidosController extends PresentationLayer implements Initializabl
     
     private void initView() {
         try {
+            // TODO
+            //txtNombre.setText(customer);
+            //txtEmail.setText(customer);
+            
             this.ordersLogic = new OrdersLogic();
             this.orderDetailsLogic = new OrderDetailsLogic();
             List<Order> orders = ordersLogic.getAllByCustomer(customer);
@@ -206,6 +213,22 @@ public class PedidosController extends PresentationLayer implements Initializabl
         });
     }
     
+    @FXML 
+    void onActionVolver(ActionEvent event) {
+
+        try {
+            FXMLLoader fxmlPrimary = new FXMLLoader(this.getClass().getClassLoader().getResource("presentacion/primary.fxml"));
+            Scene scene = new Scene(fxmlPrimary.load());
+            fxmlPrimary.setController(Manager.getInstance().getController(PrimaryController.class));
+            Stage stage = this.getStage();
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(PedidosController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+    
     @FXML
     void onMouseClickedObtainDetails(MouseEvent event) {
         Order selectedOrder = tablePedidos.getSelectionModel().getSelectedItem();
@@ -215,14 +238,44 @@ public class PedidosController extends PresentationLayer implements Initializabl
     
     @FXML
     void onActionAddLineaPedido(ActionEvent event) {
-        loader.openNewWindow("/presentacion/crearModificarLineaPedidos.fxml");
+        openOrdersManager(null);
+    }
+
+    @FXML
+    void onActionModPedido(ActionEvent event) {
+        openOrdersManager(tablePedidos.getSelectionModel().getSelectedItem());
+    }
+    
+    @FXML
+    void onActionModLineaPedido(ActionEvent event) {
+        openOrderDetailsManager(tableLineaPedidos.getSelectionModel().getSelectedItem());
     }
 
     @FXML
     void onActionAddPedido(ActionEvent event) {
-        loader.openNewWindow("/presentacion/pedidosCrearModificar.fxml");
+        openOrderDetailsManager(null);
     }
 
+    /**
+     * Abre la ventana de añadir o editar pedidos.
+     * @param order el objeto de tipo order.
+     */
+    private void openOrdersManager(Order order){
+        loader.openNewWindow("/presentacion/pedidosCrearModificar.fxml");
+        PedidosCrearModificarController controller = (PedidosCrearModificarController)Manager.getInstance().getController(PedidosCrearModificarController.class);
+        controller.setData(order);
+    }
+    
+    /**
+     * Abre la ventana de añadir o editar detalles de pedidos.
+     * @param orderDetails el objeto de tipo OrderDetails.
+     */
+    private void openOrderDetailsManager(OrderDetails orderDetails){
+        loader.openNewWindow("/presentacion/pedidosCrearModificar.fxml");
+        CrearModificarLineaPedidosController controller = (CrearModificarLineaPedidosController)Manager.getInstance().getController(CrearModificarLineaPedidosController.class);
+        controller.setData(orderDetails);
+    }
+    
     @FXML
     void onActionDelLineaPedido(ActionEvent event) {
         try {
@@ -239,16 +292,6 @@ public class PedidosController extends PresentationLayer implements Initializabl
         } catch (LogicLayerException ex) {
            Utils.showErrorAlert(ex.getMessage());
         }
-    }
-
-    @FXML
-    void onActionModLineaPedido(ActionEvent event) {
-        loader.openNewWindow("/presentacion/crearModificarLineaPedidos.fxml");
-    }
-
-    @FXML
-    void onActionModPedido(ActionEvent event) {
-        loader.openNewWindow("/presentacion/pedidosCrearModificar.fxml");
     }
 
     @Override

@@ -21,7 +21,7 @@
                <top>
                   <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Button fx:id="btnVolver" mnemonicParsing="false" text="Volver" />
+                        <Button fx:id="btnVolver" mnemonicParsing="false" onAction="#onActionVolver" text="Volver" />
                         <Label text="Cliente" />
                         <HBox fillHeight="false" maxWidth="150.0" spacing="10.0">
                            <children>
