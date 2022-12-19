@@ -6,6 +6,7 @@ package aplicacion;
 
 import aplicacion.modelo.Product;
 import datos.ProductsDAO;
+import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.List;
 import javafx.collections.ObservableList;
@@ -31,6 +32,18 @@ public class ProductsLogic extends LogicLayer{
         } catch (SQLException ex){
             throw new LogicLayerException("Error de capa de dades recuperant llista d'oficines : " + ex.toString());
         }
+    }
+    
+    public void addProducto(Product p) throws SQLException{
+        this.getProductsDAO().save(p);
+    }
+    
+    public Product getProducto(Product p) throws SQLException{
+        return this.getProductsDAO().get(p);
+    }
+    
+    public void eliminaProducto(Product p) throws SQLException{
+        this.getProductsDAO().delete(p);
     }
 
     @Override

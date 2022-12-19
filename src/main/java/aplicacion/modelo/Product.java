@@ -27,6 +27,16 @@ public class Product {
 
     public Product() {
     }
+    
+    //Constructor sin el code
+
+    public Product(String productName, int quantityInStock, float buyPrice, String productDescription) {
+        this.productName = productName;
+        this.quantityInStock = quantityInStock;
+        this.buyPrice = buyPrice;
+        this.productDescription = productDescription;
+    }
+    
 
     //Creacion de los Getters y Setters
     public int getProductCode() {

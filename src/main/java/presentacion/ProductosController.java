@@ -6,6 +6,7 @@ package presentacion;
 
 import Utils.LoadFXML;
 import aplicacion.LogicLayerException;
+import aplicacion.Manager;
 import aplicacion.ProductsLogic;
 import aplicacion.modelo.Product;
 import java.io.IOException;
@@ -39,13 +40,12 @@ import javafx.stage.Stage;
  */
 public class ProductosController extends PresentationLayer implements Initializable {
 
-    
     // Creacion de observable list(Actuan a modo de arrayList pero en javaFx)
     // ArrayList elements para todo tipo de gestion con los parametros introducidos y listas
     // filtroListas servira para la barra de busqueda
     //Se asignan de clase playlist para trabajar con la clase y su atributos
     ObservableList<Product> elements = FXCollections.observableArrayList();
-    
+
     @FXML
     private Button btnAñadir;
 
@@ -56,54 +56,92 @@ public class ProductosController extends PresentationLayer implements Initializa
     private Button btnModificar;
 
     @FXML
-    private TableColumn columnCodigoPr, columnDescripcionPr, columnNombrePr, columnPrecioPr,columnStockPr;
+    private TableColumn columnCodigoPr, columnDescripcionPr, columnNombrePr, columnPrecioPr, columnStockPr;
 
     @FXML
     private TableView tblProductos;
 
-    
     /**
      * Initializes the controller class.
      */
-    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
-       try {
-            
-           this.productsLogic = new ProductsLogic();
-           List<Product> listProductos;
-           
-           listProductos = productsLogic.mostrarProductos();
-           listProductos.forEach(x -> this.elements.add(x));
-           
-           //Establecemos un vinculo entre cada columna de la tabla y cada nombre de el getter de mi clase(Product)
-           columnCodigoPr.setCellValueFactory(new PropertyValueFactory<>("ProductCode"));
-           columnNombrePr.setCellValueFactory(new PropertyValueFactory<>("ProductName"));
-           columnDescripcionPr.setCellValueFactory(new PropertyValueFactory<>("ProductDescription"));
-           columnStockPr.setCellValueFactory(new PropertyValueFactory<>("QuantityInStock"));
-           columnPrecioPr.setCellValueFactory(new PropertyValueFactory<>("BuyPrice"));
-           
-           tblProductos.setItems(elements);
+
+        try {
+
+            this.productsLogic = new ProductsLogic();
+            List<Product> listProductos;
+
+            listProductos = productsLogic.mostrarProductos();
+            listProductos.forEach(x -> this.elements.add(x));
+
+            //Establecemos un vinculo entre cada columna de la tabla y cada nombre de el getter de mi clase(Product)
+            columnCodigoPr.setCellValueFactory(new PropertyValueFactory<>("ProductCode"));
+            columnNombrePr.setCellValueFactory(new PropertyValueFactory<>("ProductName"));
+            columnDescripcionPr.setCellValueFactory(new PropertyValueFactory<>("ProductDescription"));
+            columnStockPr.setCellValueFactory(new PropertyValueFactory<>("QuantityInStock"));
+            columnPrecioPr.setCellValueFactory(new PropertyValueFactory<>("BuyPrice"));
+
+            //seteamos los elementos a la tabla 
+            tblProductos.setItems(elements);
         } catch (LogicLayerException ex) {
             Logger.getLogger(ProductosController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     @FXML
-    void onActionAdd(ActionEvent event) {
-        
+    void onActionAdd(ActionEvent event) throws SQLException {
+
         //creamos un loader al que le pasaremos la ruta para ir a la pantalla que queremos 
         LoadFXML loader = new LoadFXML();
         loader.openNewWindow("/presentacion/productosCrearModificar.fxml");
-    }
-    
-    @FXML
-    void onActionModificar(ActionEvent event) {
+        
+        Product p = ((ProductosCrearModificarController) Manager.getInstance().getController(ProductosCrearModificarController.class)).getData();
+        try {
+            
+            this.productsLogic = new ProductsLogic();
+            Product pFinal = this.productsLogic.getProducto(p);
+            
+            this.elements.add(pFinal);
+            tblProductos.setItems(elements);
+        } catch (LogicLayerException ex) {
+            Logger.getLogger(ProductosController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
     }
 
     @FXML
-    void onActionEliminar(ActionEvent event) {
+    void onActionModificar(ActionEvent event) {
+
+        ProductosCrearModificarController controller = (ProductosCrearModificarController) Manager.getInstance().getController(ProductosCrearModificarController.class);
+        Product p = (Product) tblProductos.getSelectionModel().getSelectedItem();
+        controller.setData(p);
+
+        LoadFXML loader = new LoadFXML();
+        loader.openNewWindow("/presentacion/productosCrearModificar.fxml");
+
+    }
+
+    @FXML
+    void onActionEliminar(ActionEvent event) throws LogicLayerException, SQLException {
+        Product p = getProductoFromTable();
+
+        this.productsLogic = new ProductsLogic();
+        
+        productsLogic.eliminaProducto(p);
+        this.elements.remove(p);
+        tblProductos.setItems(elements);
+
+    }
+
+    //sacar seleccionado en la tabla
+    private Product getProductoFromTable() {
+        Product ret = null;
+
+        ret = (Product) tblProductos.getSelectionModel().getSelectedItem();
+
+        return ret;
     }
 
     @Override

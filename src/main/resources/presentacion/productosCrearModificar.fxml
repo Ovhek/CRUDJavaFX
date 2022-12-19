@@ -35,8 +35,8 @@
             <TextArea fx:id="editDescripcion" prefHeight="128.0" prefWidth="274.0" />
             <HBox prefHeight="100.0" prefWidth="274.0" spacing="48.0" VBox.vgrow="ALWAYS">
                <children>
-                  <Button fx:id="btnAceptar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Aceptar" HBox.hgrow="ALWAYS" />
-                  <Button fx:id="btnCancelar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Cancelar" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="btnAceptar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onActionAceptar" text="Aceptar" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="btnCancelar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onActionCancelar" text="Cancelar" HBox.hgrow="ALWAYS" />
                </children>
                <padding>
                   <Insets bottom="8.0" left="24.0" right="24.0" top="24.0" />

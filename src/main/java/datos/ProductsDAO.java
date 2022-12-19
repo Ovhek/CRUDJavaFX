@@ -41,23 +41,52 @@ public class ProductsDAO extends DataLayer implements DAOInterface<Product> {
     }
 
     @Override
-    public void save(Product t) throws SQLException {
+    public void save(Product p) throws SQLException {
+        Statement sentencia;
+        sentencia = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        sentencia.executeQuery("SELECT * FROM products");
+        ResultSet rs = sentencia.getResultSet();
+        rs.last();
+        int id = rs.getInt("productCode")+1;
+        rs.moveToInsertRow();
+        rs.updateInt("ProductCode", id);
+        rs.updateString("ProductName", p.getProductName());
+        rs.updateString("ProductDescription", p.getProductDescription());
+        rs.updateInt("QuantityInStock", p.getQuantityInStock());
+        rs.updateFloat("BuyPrice", p.getBuyPrice());
+        rs.insertRow();
+        
+    }
+    
+    @Override
+    public void update(Product p) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void update(Product t) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void delete(Product p) throws SQLException {
+        Statement sentencia;
+        sentencia = con.createStatement();
+        String sqlStr = "DELETE FROM products WHERE productCode = " + p.getProductCode();
+        sentencia.executeUpdate(sqlStr);
+        
     }
 
     @Override
-    public void delete(Product t) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Product get(Product t) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Product get(Product p) throws SQLException {
+        Product ret = new Product();
+        
+        Statement sentencia;
+        
+        sentencia = this.getCon().createStatement();
+        sentencia.execute("SELECT * FROM products WHERE productName = '" + p.getProductName()+"'");
+        ResultSet rs = sentencia.getResultSet();
+        if(rs.next()){
+            
+            ret = new Product(rs.getInt("productCode"), rs.getString("productName"), rs.getString("productDescription"), rs.getInt("quantityInStock"), rs.getFloat("buyPrice"));
+        }
+        
+        return ret;
     }
 
 }

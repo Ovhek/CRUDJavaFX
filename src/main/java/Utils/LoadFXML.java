@@ -35,14 +35,14 @@ public class LoadFXML {
             Parent root = loader.load();
             
             Object tempController = null;
-            
-            var managerController = Manager.getInstance().getController(loader.getClass());
+            var test = loader.getController().getClass();
+            var managerController = Manager.getInstance().getController(loader.getController().getClass());
             
             if( managerController == null)
                 tempController = loader.getController();
             else tempController = managerController;
             
-            loader.setController(Manager.getInstance().getController(tempController.getClass()));
+            loader.setController(tempController);
             //Creams scene y stage para trabajar con otra pantalla
             //creamos una escena que vendra del padre
             Scene scene = new Scene(root);
