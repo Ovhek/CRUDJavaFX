@@ -27,7 +27,8 @@ public class LoadFXML {
         try {
             //Creamos el loader y el controlador para trabajar con la pantalla que abriremos 
             //y traernos parametros
-            FXMLLoader loader = new FXMLLoader(this.getClass().getResource(fxml));
+            var test = this.getClass().getClassLoader();
+            FXMLLoader loader = new FXMLLoader(this.getClass().getClassLoader().getResource(fxml));
 
 
             //Con root haremos referencia al padre y lo cargaremos
@@ -35,7 +36,6 @@ public class LoadFXML {
             Parent root = loader.load();
             
             Object tempController = null;
-            var test = loader.getController().getClass();
             var managerController = Manager.getInstance().getController(loader.getController().getClass());
             
             if( managerController == null)

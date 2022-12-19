@@ -46,8 +46,12 @@ public class ProductsDAO extends DataLayer implements DAOInterface<Product> {
         sentencia = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         sentencia.executeQuery("SELECT * FROM products");
         ResultSet rs = sentencia.getResultSet();
-        rs.last();
-        int id = rs.getInt("productCode")+1;
+        int id = 0;
+        if(rs.next()){
+            rs.last();
+            id = rs.getInt("productCode")+1;
+        }
+
         rs.moveToInsertRow();
         rs.updateInt("ProductCode", id);
         rs.updateString("ProductName", p.getProductName());
@@ -83,6 +87,21 @@ public class ProductsDAO extends DataLayer implements DAOInterface<Product> {
         ResultSet rs = sentencia.getResultSet();
         if(rs.next()){
             
+            ret = new Product(rs.getInt("productCode"), rs.getString("productName"), rs.getString("productDescription"), rs.getInt("quantityInStock"), rs.getFloat("buyPrice"));
+        }
+        
+        return ret;
+    }
+    
+    public Product getByProductCode(String productCode) throws SQLException {
+        Product ret = new Product();
+        
+        Statement sentencia;
+        
+        sentencia = this.getCon().createStatement();
+        sentencia.execute("SELECT * FROM products WHERE productCode = '" + productCode+"'");
+        ResultSet rs = sentencia.getResultSet();
+        if(rs.next()){
             ret = new Product(rs.getInt("productCode"), rs.getString("productName"), rs.getString("productDescription"), rs.getInt("quantityInStock"), rs.getFloat("buyPrice"));
         }
         

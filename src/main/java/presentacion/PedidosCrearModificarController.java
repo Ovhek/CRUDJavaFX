@@ -5,18 +5,23 @@
 package presentacion;
 
 import Utils.Utils;
+import aplicacion.CustomersLogic;
 import aplicacion.LogicLayerException;
 import aplicacion.Manager;
 import aplicacion.OrdersLogic;
+import aplicacion.modelo.Customer;
 import aplicacion.modelo.Order;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,6 +33,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -37,9 +43,6 @@ import javafx.scene.control.TextField;
 public class PedidosCrearModificarController extends PresentationLayer implements Initializable {
 
 
-    // ComboBox del email
-    @FXML
-    private ComboBox<String > comboEmailCliente;
     // Botón para aceptar los cambios
     @FXML
     private Button btnAceptar;
@@ -66,7 +69,7 @@ public class PedidosCrearModificarController extends PresentationLayer implement
 
     // Etiqueta para mostrar el correo electrónico del cliente
     @FXML
-    private Label txtEmailCliente;
+    private Label txtEmail;
 
     // Etiqueta para mostrar la fecha de envío del pedido
     @FXML
@@ -89,34 +92,30 @@ public class PedidosCrearModificarController extends PresentationLayer implement
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         Manager.getInstance().addController(this);
+        this.order = ((PedidosController)Manager.getInstance().getController(PedidosController.class)).getSelectedOrder();
+        initView();
     }    
 
-    /**
-     * Método para obtener los datos desde otra vista.
-     */
-    public void setData(Order order){
-        this.order = order;
-        initView();
-    }
-    
     /**
      * Método para cerrar la vista.
      */
     @Override
     public void close() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Stage stage = (Stage) this.btnAceptar.getScene().getWindow();
+        stage.close();
+    }    
+    @FXML
+    void onActionCancelar(ActionEvent event) {
+        close();
     }
-
     /**
      * Método para inicializar la vista con los datos del pedido.
      */
     private void initView() {
         if(order == null){
-            //TODO: Obtener lista de customers
-            //ObservableList customerEmails = FXCollections.observableArrayList();
-            //añadirla al combobox
-            //comboEmailCliente.setItems();
-            //this.customersLogic.close();
+            dateFechaEnvio.setValue(null);
+            dateFechaLlegada.setValue(null);
+            dateFechaPedido.setValue(null);
             return;
         }
 
@@ -126,9 +125,6 @@ public class PedidosCrearModificarController extends PresentationLayer implement
         dateFechaLlegada.setValue(order.getRequiredDate().toLocalDateTime().toLocalDate());
         // Establecer la fecha de pedido en el campo de selección de fecha
         dateFechaPedido.setValue(order.getOrderDate().toLocalDateTime().toLocalDate());
-        // Establecer el correo electrónico del cliente en el campo de edición
-        comboEmailCliente.setDisable(true);
-        comboEmailCliente.setValue(order.getCustomers_customerEmail());
     }
     
     /**
@@ -136,11 +132,23 @@ public class PedidosCrearModificarController extends PresentationLayer implement
      */
     @FXML
     void onActionAceptar(ActionEvent event) {
+        PedidosController controller = ((PedidosController)Manager.getInstance().getController(PedidosController.class));
         try {
             this.ordersLogic = new OrdersLogic();
-            if(order == null) ordersLogic.save(constructOrder());
-            else ordersLogic.update(constructOrder());
+            if(order == null){
+                Order newOrder = constructOrder();
+                List<Order> orders =  ordersLogic.getAll();
+                newOrder.setOrderNumber(orders.get(orders.size()-1).getOrderNumber()+1);
+                controller.addItemToOrders(newOrder);
+            }
+            else{
+                Order newOrder = constructOrder();
+                newOrder.setOrderNumber(order.getOrderNumber());
+                controller.modifyItemOfOrders(order, newOrder);
+                ordersLogic.update(newOrder);
+            }
             this.ordersLogic.close();
+            close();
         } catch (LogicLayerException ex) {
             Utils.showErrorAlert("Error: " + ex.getMessage());
         }
@@ -155,7 +163,7 @@ public class PedidosCrearModificarController extends PresentationLayer implement
                 obtainTimeStamp(dateFechaPedido.getValue()),
                 obtainTimeStamp(dateFechaLlegada.getValue()),
                 obtainTimeStamp(dateFechaEnvio.getValue()),
-                comboEmailCliente.getSelectionModel().getSelectedItem()
+                ((PedidosController)Manager.getInstance().getController(PedidosController.class)).getCustomerEmail()
         );
     }
     

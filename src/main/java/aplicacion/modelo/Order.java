@@ -22,13 +22,18 @@ public class Order {
     public ArrayList<OrderDetails> getOrderDetails() {
         return orderDetails;
     }
-
+    
+    public void addOrderDetailsToOrder(OrderDetails orderDetail) {
+        orderDetails.add(orderDetail);
+    }
 
 
     public Order() {
+        orderDetails = new ArrayList<OrderDetails>();
     }
 
     public Order(int orderNumber, Timestamp orderDate, Timestamp requiredDate, Timestamp shippedDate, String customers_customerEmail) {
+        orderDetails = new ArrayList<OrderDetails>();
         this.orderNumber = orderNumber;
         this.orderDate = orderDate;
         this.requiredDate = requiredDate;

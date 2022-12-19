@@ -6,13 +6,16 @@ package presentacion;
 
 import Utils.LoadFXML;
 import Utils.Utils;
+import aplicacion.CustomersLogic;
 import aplicacion.LogicLayerException;
 import aplicacion.Manager;
 import aplicacion.OrderDetailsLogic;
 import aplicacion.OrdersLogic;
+import aplicacion.ProductsLogic;
 import aplicacion.modelo.Customer;
 import aplicacion.modelo.Order;
 import aplicacion.modelo.OrderDetails;
+import aplicacion.modelo.Product;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -21,6 +24,8 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.Observable;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -30,6 +35,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -39,6 +45,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 /**
  * FXML Controller class
@@ -70,7 +77,7 @@ public class PedidosController extends PresentationLayer implements Initializabl
 
     @FXML
     private HBox hBoxBottomLayout;
-        
+
     @FXML
     private TableColumn columnLineaPedidosCantidad;
 
@@ -78,10 +85,7 @@ public class PedidosController extends PresentationLayer implements Initializabl
     private TableColumn columnLineaPedidosCodigoProducto;
 
     @FXML
-    private TableColumn columnLineaPedidosNombreProducto;
-
-    @FXML
-    private TableColumn columnLineaPedidosNumLinea;
+    private TableColumn<OrderDetails, String> columnLineaPedidosNombreProducto;
 
     @FXML
     private TableColumn columnLineaPedidosPrecio;
@@ -124,14 +128,35 @@ public class PedidosController extends PresentationLayer implements Initializabl
 
     @FXML
     private VBox vBox_2;
-    
+
     @FXML
     private AnchorPane layoutPedidos;
-        
+
     private Customer customer = new Customer();
     private LoadFXML loader = new LoadFXML();
     private Manager manager = Manager.getInstance();
     private float importeTotal = 0f;
+    private Order selectedOrder;
+    private OrderDetails selectedOrderDetails;
+    private ObservableList<OrderDetails> observableDetails;
+    private ObservableList<Order> observableOrders;
+    private String customerEmail;
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public String getCustomerEmail() {
+        return customerEmail;
+    }
+
+    public Order getSelectedOrder() {
+        return selectedOrder;
+    }
+
+    public OrderDetails getSelectedOrderDetails() {
+        return selectedOrderDetails;
+    }
 
     public float getImporteTotal() {
         return importeTotal;
@@ -143,76 +168,89 @@ public class PedidosController extends PresentationLayer implements Initializabl
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         Manager.getInstance().addController(this);
+        initView();
         initListeners();
-    } 
-    
+    }
+
     private void initView() {
         try {
-            // TODO
-            //txtNombre.setText(customer);
-            //txtEmail.setText(customer);
-            
+            customer = ((ClientesController) Manager.getInstance().getController(ClientesController.class)).getSelectedCustomer();
+            customerEmail = customer.getCustomerEmail();
+            txtNombre.setText(customer.getCustomerName());
+            txtEmail.setText(customerEmail);
+
             this.ordersLogic = new OrdersLogic();
             this.orderDetailsLogic = new OrderDetailsLogic();
             List<Order> orders = ordersLogic.getAllByCustomer(customer);
             ordersLogic.close();
-            orders.forEach( order -> {
+            orders.forEach(order -> {
                 try {
                     order.setOrderDetails((ArrayList<OrderDetails>) orderDetailsLogic.getAllByOrderNumber(order));
-                    orderDetailsLogic.close();
                 } catch (LogicLayerException ex) {
                     Utils.showErrorAlert(ex.getMessage());
                 }
             });
-            
-            ObservableList<Order> observableOrders = FXCollections.observableArrayList(orders);
-            
-            tablePedidos.setItems(observableOrders);
-            columnPedidosEmail.setCellFactory(new PropertyValueFactory("customers_customerEmail"));
-            columnPedidosFechaEnvio.setCellFactory(new PropertyValueFactory("shippedDate"));
-            columnPedidosFechaPedido.setCellFactory(new PropertyValueFactory("orderDate"));
-            columnPedidosFechaRequerida.setCellFactory(new PropertyValueFactory("requiredDate"));
-            columnPedidosID.setCellFactory(new PropertyValueFactory("orderNumber"));
-            
-            
-            columnLineaPedidosCantidad.setCellFactory(new PropertyValueFactory("quantityOrdered"));
-            columnLineaPedidosCodigoProducto.setCellFactory(new PropertyValueFactory("productCode"));
-            //TODO: Obtener el nombre del producto!!
-            columnLineaPedidosNombreProducto.setCellFactory(new PropertyValueFactory(""));
-            columnLineaPedidosNumLinea.setCellFactory(new PropertyValueFactory("orderLineNumber"));
-            columnLineaPedidosPrecio.setCellFactory(new PropertyValueFactory("priceEach"));
+            orderDetailsLogic.close();
+            observableOrders = FXCollections.observableArrayList(orders);
 
-           
+            tablePedidos.setItems(observableOrders);
+            columnPedidosEmail.setCellValueFactory(new PropertyValueFactory("customers_customerEmail"));
+            columnPedidosFechaEnvio.setCellValueFactory(new PropertyValueFactory("shippedDate"));
+            columnPedidosFechaPedido.setCellValueFactory(new PropertyValueFactory("orderDate"));
+            columnPedidosFechaRequerida.setCellValueFactory(new PropertyValueFactory("requiredDate"));
+            columnPedidosID.setCellValueFactory(new PropertyValueFactory("orderNumber"));
+
+            columnLineaPedidosCantidad.setCellValueFactory(new PropertyValueFactory("quantityOrdered"));
+            columnLineaPedidosCodigoProducto.setCellValueFactory(new PropertyValueFactory("productCode"));
+            columnLineaPedidosPrecio.setCellValueFactory(new PropertyValueFactory("priceEach"));
+
+            this.productsLogic = new ProductsLogic();
+            //Mostramos el nombre del Producto utilizando una customización del tablecolumn.
+            columnLineaPedidosNombreProducto.setCellValueFactory(cellData -> {
+                SimpleStringProperty ret = null;
+                try {
+                    ret = new SimpleStringProperty(
+                            this.productsLogic.getProductoByProductCode(
+                                    String.valueOf(cellData.getValue().getProductCode())
+                            ).getProductName()
+                    );
+                } catch (LogicLayerException ex) {
+                    Utils.showErrorAlert(ex.getMessage());
+                }
+                return ret;
+            });
+            
+            this.productsLogic.close();
+
         } catch (LogicLayerException ex) {
             Utils.showErrorAlert(ex.getMessage());
         }
     }
-    
-    public void setCustomerData(Customer customer){
-        this.customer = customer;
-        initView();
-    }
-    
-     /**
+
+    /**
      * Inicialización de los listener del controlar
-     * 
+     *
      */
     private void initListeners() {
+        tablePedidos.setOnMouseClicked( e ->{ onMouseClicked(e); });
         //Función encargada de comprobar la anchura de la ventana y modificar la posición de los objetos en base a ello.
         layoutPedidos.sceneProperty().addListener((observableScene, oldScene, newScene) -> {
-            if(oldScene == null && newScene != null){
-                newScene.windowProperty().addListener((ow,oldWindow,newWindow) ->{
-                    newWindow.widthProperty().addListener((ov,oldVal,newVal)->{
+            if (oldScene == null && newScene != null) {
+                newScene.windowProperty().addListener((ow, oldWindow, newWindow) -> {
+                    if (newWindow == null) {
+                        return;
+                    }
+                    newWindow.widthProperty().addListener((ov, oldVal, newVal) -> {
                         var hboxChildrens = hBoxAsVboxContainer.getChildren();
-                        if (newVal.intValue() < 900){
+                        if (newVal.intValue() < 950) {
                             hboxChildrens.remove(vBox_2);
                             responsiveLayout.setBottom(vBox_2);
-                        }
-                        else{
+                        } else {
                             responsiveLayout.setBottom(null);
 
-                            if(hboxChildrens.size() != 2)
+                            if (hboxChildrens.size() != 2) {
                                 hBoxAsVboxContainer.getChildren().add(vBox_2);
+                            }
 
                         }
                     });
@@ -220,15 +258,14 @@ public class PedidosController extends PresentationLayer implements Initializabl
             }
         });
     }
-    
-    @FXML 
-    void onActionVolver(ActionEvent event) {
 
+    @FXML
+    void onActionVolver(ActionEvent event) {
         try {
             FXMLLoader fxmlPrimary = new FXMLLoader(this.getClass().getClassLoader().getResource("presentacion/primary.fxml"));
             Scene scene = new Scene(fxmlPrimary.load());
             fxmlPrimary.setController(Manager.getInstance().getController(PrimaryController.class));
-            Stage stage = this.getStage();
+            Stage stage = (Stage) tablePedidos.getScene().getWindow();
             stage.setScene(scene);
             stage.show();
         } catch (IOException ex) {
@@ -236,80 +273,126 @@ public class PedidosController extends PresentationLayer implements Initializabl
         }
 
     }
-    
-    @FXML
-    void onMouseClickedObtainDetails(MouseEvent event) {
-        Order selectedOrder = tablePedidos.getSelectionModel().getSelectedItem();
-        ArrayList<OrderDetails> orderDetails = selectedOrder.getOrderDetails();
-        orderDetails.forEach(orderDetail -> importeTotal+= orderDetail.getQuantityOrdered()*orderDetail.getPriceEach());
-        ObservableList<OrderDetails> observableDetails = FXCollections.observableArrayList(orderDetails);
-        tableLineaPedidos.setItems(observableDetails);
-    }
-    
+
     @FXML
     void onActionAddLineaPedido(ActionEvent event) {
-        openOrdersManager(null);
+        selectedOrderDetails = null;
+        openOrderDetailsManager();
     }
 
     @FXML
     void onActionModPedido(ActionEvent event) {
-        openOrdersManager(tablePedidos.getSelectionModel().getSelectedItem());
+        selectedOrder = tablePedidos.getSelectionModel().getSelectedItem();
+        if (selectedOrder == null) {
+            return;
+        }
+        openOrdersManager();
     }
-    
+
     @FXML
     void onActionModLineaPedido(ActionEvent event) {
-        openOrderDetailsManager(tableLineaPedidos.getSelectionModel().getSelectedItem());
+        selectedOrderDetails = tableLineaPedidos.getSelectionModel().getSelectedItem();
+        if (selectedOrderDetails == null) {
+            return;
+        }
+        openOrderDetailsManager();
     }
 
     @FXML
     void onActionAddPedido(ActionEvent event) {
-        openOrderDetailsManager(null);
+        selectedOrder = null;
+        openOrdersManager();
     }
 
     /**
      * Abre la ventana de añadir o editar pedidos.
+     *
      * @param order el objeto de tipo order.
      */
-    private void openOrdersManager(Order order){
-        loader.openNewWindow("/presentacion/pedidosCrearModificar.fxml");
-        PedidosCrearModificarController controller = (PedidosCrearModificarController)Manager.getInstance().getController(PedidosCrearModificarController.class);
-        controller.setData(order);
+    private void openOrdersManager() {
+        loader.openNewWindow("presentacion/pedidosCrearModificar.fxml");
     }
-    
+
     /**
      * Abre la ventana de añadir o editar detalles de pedidos.
+     *
      * @param orderDetails el objeto de tipo OrderDetails.
      */
-    private void openOrderDetailsManager(OrderDetails orderDetails){
-        loader.openNewWindow("/presentacion/pedidosCrearModificar.fxml");
-        CrearModificarLineaPedidosController controller = (CrearModificarLineaPedidosController)Manager.getInstance().getController(CrearModificarLineaPedidosController.class);
-        controller.setData(orderDetails);
+    private void openOrderDetailsManager() {
+        loader.openNewWindow("presentacion/crearModificarLineaPedidos.fxml");
     }
-    
+
     @FXML
     void onActionDelLineaPedido(ActionEvent event) {
+        selectedOrderDetails = tableLineaPedidos.getSelectionModel().getSelectedItem();
+        if (selectedOrderDetails == null) {
+            return;
+        }
         try {
             this.orderDetailsLogic = new OrderDetailsLogic();
-            orderDetailsLogic.delete(tableLineaPedidos.getSelectionModel().getSelectedItem());
+            orderDetailsLogic.delete(selectedOrderDetails);
+            observableDetails.remove(selectedOrderDetails);
+            tableLineaPedidos.refresh();
             this.orderDetailsLogic.close();
         } catch (LogicLayerException ex) {
-           Utils.showErrorAlert(ex.getMessage());
+            Utils.showErrorAlert(ex.getMessage());
         }
+    }
+
+    public void addItemToOrders(Order order) {
+        observableOrders.add(order);
+        tablePedidos.refresh();
+    }
+
+    public void modifyItemOfOrders(Order oldOrder, Order newOrder) {
+        observableOrders.set(observableOrders.indexOf(oldOrder), newOrder);
+        tablePedidos.setItems(observableOrders);
+    }
+
+    public void addItemToOrderDetails(OrderDetails orderDetails) {
+        observableDetails.add(orderDetails);
+        tableLineaPedidos.refresh();
+    }
+
+    public void modifyItemOfOrderDetails(OrderDetails oldOrderDetails, OrderDetails newOrderDetails) {
+        observableDetails.set(observableDetails.indexOf(oldOrderDetails), newOrderDetails);
+        tableLineaPedidos.refresh();
     }
 
     @FXML
     void onActionDelPedido(ActionEvent event) {
+        selectedOrder = tablePedidos.getSelectionModel().getSelectedItem();
+        if (selectedOrder == null) {
+            return;
+        }
         try {
             this.ordersLogic = new OrdersLogic();
-            ordersLogic.delete(tablePedidos.getSelectionModel().getSelectedItem());
+            ordersLogic.delete(selectedOrder);
+            observableOrders.remove(selectedOrder);
+            tablePedidos.refresh();
             this.ordersLogic.close();
         } catch (LogicLayerException ex) {
-           Utils.showErrorAlert(ex.getMessage());
+            Utils.showErrorAlert(ex.getMessage());
         }
     }
 
     @Override
     public void close() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private void onMouseClicked(MouseEvent e) {
+        selectedOrder = tablePedidos.getSelectionModel().getSelectedItem();
+        observableDetails = FXCollections.observableArrayList();
+        if (selectedOrder == null) {
+            return;
+        }
+        ArrayList<OrderDetails> orderDetails = selectedOrder.getOrderDetails();
+        if (orderDetails == null) {
+            return;
+        }
+        orderDetails.forEach(orderDetail -> importeTotal += orderDetail.getQuantityOrdered() * orderDetail.getPriceEach());
+        observableDetails = FXCollections.observableArrayList(orderDetails);
+        tableLineaPedidos.setItems(observableDetails);
     }
 }
