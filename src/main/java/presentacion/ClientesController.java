@@ -4,11 +4,15 @@
  */
 package presentacion;
 
+import aplicacion.CustomersLogic;
+import aplicacion.LogicLayerException;
 import aplicacion.modelo.Customer;
 import datos.CustomersDAO;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -40,10 +44,16 @@ public class ClientesController extends PresentationLayer implements Initializab
     private TableColumn<Customer, Double> colum_clienteSaldo;
 
     private ObservableList<Customer> lista = FXCollections.observableArrayList();
-    private final CustomersDAO bd = new CustomersDAO();
+    
+    private CustomersLogic customersLogic;
 
-    public ClientesController() throws SQLException {
-
+    public ClientesController()  {
+        
+        try {
+            this.customersLogic = new CustomersLogic();
+        } catch (LogicLayerException ex) {
+            Logger.getLogger(ClientesController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
@@ -54,18 +64,18 @@ public class ClientesController extends PresentationLayer implements Initializab
         colum_clienteNac.setCellValueFactory(new PropertyValueFactory<>("birthDate"));
         colum_clienteTargeta.setCellValueFactory(new PropertyValueFactory<>("idCard"));
         colum_clienteSaldo.setCellValueFactory(new PropertyValueFactory<>("creditLimit"));
-        obtenerDatos();
+        cargarDatos();
         tbview_cliente.setItems(lista);
     }
 
-    private void obtenerDatos() {
+    
+    private void cargarDatos(){
         try {
-            lista = (ObservableList<Customer>) bd.getAll();
-        } catch (SQLException e) {
-            System.out.println("Error al leer los datos: " + e);
+            lista.addAll(customersLogic.obtenerDatos());
+        } catch (LogicLayerException ex) {
+            ex.getMessage();
         }
     }
-
     @Override
     public void close() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody

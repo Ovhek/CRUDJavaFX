@@ -23,7 +23,7 @@ public class CustomersDAO extends DataLayer implements DAOInterface<Customer> {
     @Override
     public List<Customer> getAll() throws SQLException {
 
-        Connection conecxion = MySQLConnector.ConnectarBD("m03uf6_22_23", "admin@localhost", "123456");
+        Connection conecxion = this.getCon();
 
         Statement sentencia = conecxion.createStatement();
         ResultSet result = sentencia.executeQuery("SELECT * FROM customers");
@@ -31,10 +31,10 @@ public class CustomersDAO extends DataLayer implements DAOInterface<Customer> {
         List<Customer> lista = new ArrayList<>();
 
         while (result.next()) {
-            String customerEmail = result.getNString("customerEmail");
-            String idCard = result.getNString("idCard");
-            String customerName = result.getNString("customerName");
-            String phone = result.getNString("phone");
+            String customerEmail = result.getString("customerEmail");
+            String idCard = result.getString("idCard");
+            String customerName = result.getString("customerName");
+            String phone = result.getString("phone");
             double creditLimit = result.getDouble("creditLimit");
             String birthDate = result.getDate("birthDate").toString();
 
