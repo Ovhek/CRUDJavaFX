@@ -6,7 +6,12 @@ package presentacion;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -15,17 +20,50 @@ import javafx.fxml.Initializable;
  */
 public class CrearModificarClienteController extends PresentationLayer implements Initializable {
 
-    /**
-     * Initializes the controller class.
-     */
+    @FXML
+    private Button btn_clienteAceptar;
+
+    @FXML
+    private Button btn_clienteCancelar;
+
+    @FXML
+    private TextField txtf_clienteEmail;
+
+    @FXML
+    private TextField txtf_clienteNac;
+
+    @FXML
+    private TextField txtf_clienteNombre;
+
+    @FXML
+    private TextField txtf_clienteSaldo;
+
+    @FXML
+    private TextField txtf_clienteTargeta;
+
+    @FXML
+    private TextField txtf_clienteTelf;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }    
+    }
+    
+    @FXML
+    void btnAceptarOnAction(ActionEvent event) {
+
+    }
+
+    @FXML
+    void btnCancerlarOnAction(ActionEvent event) {
+        this.close();
+    }
 
     @Override
     public void close() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Stage stage = (Stage) this.btn_clienteCancelar.getScene().getWindow();
+        stage.close();
+
     }
-    
+
 }

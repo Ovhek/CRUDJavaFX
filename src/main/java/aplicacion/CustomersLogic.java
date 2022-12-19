@@ -14,14 +14,24 @@ import java.util.List;
  *
  * @author Cole
  */
-public class CustomersLogic extends LogicLayer{
-    
-   
+public class CustomersLogic extends LogicLayer {
 
     public CustomersLogic() throws LogicLayerException {
         super();
     }
+
+    public boolean introducirCliente(String customerEmail, String idCard, String customerName, String phone, double creditLimit, String birthDate) {
+       if(clienteValido(birthDate)){
+           return true;
+       }
+        
+        return false;
+    }
     
+    private boolean clienteValido(String birthDate){
+        return true;
+    }
+
     public List<Customer> obtenerDatos() throws LogicLayerException {
         ArrayList<Customer> lista = new ArrayList<>();
         try {
@@ -31,11 +41,10 @@ public class CustomersLogic extends LogicLayer{
         }
         return lista;
     }
-    
 
     @Override
     public void close() throws LogicLayerException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
 }
