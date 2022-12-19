@@ -26,6 +26,7 @@ public class MySQLConnector {
     {
         Connection ret = null;
         
+        // Clase base para poder realizar cualquier acceso a la BBDD
          ret =  DriverManager.getConnection("jdbc:mysql://localhost:3306/"+bd+"?useUnicode=true&"
                             + "useJDBCCompliantTimezoneShift=true&"
                             + "useLegacyDatetimeCode=false&serverTimezone=UTC", usuari, password);
