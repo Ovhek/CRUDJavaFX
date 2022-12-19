@@ -13,14 +13,19 @@ import javafx.fxml.Initializable;
  *
  * @author Cole
  */
-public class ProductosController implements Initializable {
+public class ProductosController extends PresentationLayer implements Initializable {
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        System.out.println("");
     }    
+
+    @Override
+    public void close() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
 }

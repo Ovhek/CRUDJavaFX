@@ -13,14 +13,18 @@ import javafx.fxml.Initializable;
  *
  * @author Cole
  */
-public class AppConfigController implements Initializable {
+public class AppConfigController extends PresentationLayer implements Initializable {
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
     }    
+
+    @Override
+    public void close() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
 }

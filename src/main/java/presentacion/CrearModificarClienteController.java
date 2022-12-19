@@ -13,7 +13,7 @@ import javafx.fxml.Initializable;
  *
  * @author joseb
  */
-public class CrearModificarClienteController implements Initializable {
+public class CrearModificarClienteController extends PresentationLayer implements Initializable {
 
     /**
      * Initializes the controller class.
@@ -22,5 +22,10 @@ public class CrearModificarClienteController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
     }    
+
+    @Override
+    public void close() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
 }
