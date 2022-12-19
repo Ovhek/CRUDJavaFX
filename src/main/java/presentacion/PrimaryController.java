@@ -13,10 +13,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
 import javax.naming.ldap.ManageReferralControl;
 
-public class PrimaryController extends PresentationLayer implements Initializable{
+public class PrimaryController extends PresentationLayer implements Initializable {
+
     @Override
     public void close() {
-        
+
     }
 
     @Override
