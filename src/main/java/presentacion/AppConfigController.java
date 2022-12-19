@@ -209,7 +209,7 @@ public class AppConfigController extends PresentationLayer implements Initializa
      * Función encargada de construir un objeto de tipo AppConfig
      * @return objeto AppConfig
      */
-    private AppConfig buildAppConfig() {
+    public AppConfig buildAppConfig() {
         AppConfig appConfig = new AppConfig();
             
         appConfig.setDefaultCreditLimit(getDefaultCreditLimit());
