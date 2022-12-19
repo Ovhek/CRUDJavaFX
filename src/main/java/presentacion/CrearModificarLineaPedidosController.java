@@ -6,6 +6,7 @@ package presentacion;
 
 import Utils.Utils;
 import aplicacion.LogicLayerException;
+import aplicacion.Manager;
 import aplicacion.OrderDetailsLogic;
 import aplicacion.OrdersLogic;
 import aplicacion.modelo.Order;
@@ -46,6 +47,7 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        Manager.getInstance().addController(this);
     }    
     
     /**
