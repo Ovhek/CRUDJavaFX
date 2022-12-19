@@ -9,18 +9,17 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
-<AnchorPane id="AnchorPane" fx:id="layoutAppConfig" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/19" fx:controller="presentacion.AppConfigController">
+<AnchorPane id="AnchorPane" fx:id="layoutAppConfig" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentacion.AppConfigController">
    <children>
-      <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <BorderPane fx:id="responsiveLayout" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <center>
-            <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+            <HBox fx:id="hBoxAsVboxContainers" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
                <children>
-                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" HBox.hgrow="ALWAYS">
+                  <VBox fx:id="vBox_1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" HBox.hgrow="ALWAYS">
                      <children>
                         <HBox alignment="BASELINE_CENTER" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
                            <children>
-                              <Label alignment="TOP_LEFT" maxWidth="1.7976931348623157E308" text="Saldo Predeterminado" HBox.hgrow="ALWAYS" />
+                              <Label maxWidth="1.7976931348623157E308" text="Saldo Predeterminado" HBox.hgrow="ALWAYS" />
                               <TextField fx:id="editSaldoPredetermiando">
                                  <HBox.margin>
                                     <Insets />
@@ -51,14 +50,14 @@
                         </HBox>
                      </children>
                      <HBox.margin>
-                        <Insets right="10.0" />
+                        <Insets />
                      </HBox.margin>
                   </VBox>
-                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" HBox.hgrow="ALWAYS">
+                  <VBox fx:id="vBox_2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                      <children>
                         <HBox alignment="BASELINE_CENTER" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
                            <children>
-                              <Label fx:id="editSaldoPredeterminado" alignment="TOP_LEFT" maxWidth="1.7976931348623157E308" text="Horas minimas de envio" HBox.hgrow="ALWAYS">
+                              <Label fx:id="editSaldoPredeterminado" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Horas minimas de envio" HBox.hgrow="ALWAYS">
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin>
@@ -83,6 +82,9 @@
                               <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Precio Máximo por pedido" HBox.hgrow="ALWAYS" />
                               <TextField fx:id="editPrecioMaximoPedido" />
                            </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
                         </HBox>
                         <HBox VBox.vgrow="ALWAYS">
                            <children>
@@ -96,11 +98,14 @@
                      </HBox.margin>
                   </VBox>
                </children>
-               <padding>
-                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-               </padding>
+               <BorderPane.margin>
+                  <Insets bottom="20.0" />
+               </BorderPane.margin>
             </HBox>
          </center>
       </BorderPane>
    </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
 </AnchorPane>

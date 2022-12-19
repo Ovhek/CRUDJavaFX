@@ -17,8 +17,8 @@ public abstract class DataLayer {
 
     public DataLayer() throws SQLException {
        //TODO: cambiar datos
-       String db = "database";
-       String user = "root";
+       String db = "m03uf6_22_23";
+       String user = "admin";
        String password = "123456";
         //Intentamos conectar
         this.con = MySQLConnector.ConnectarBD(db,user,password);
