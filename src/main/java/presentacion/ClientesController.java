@@ -4,6 +4,7 @@
  */
 package presentacion;
 
+import Utils.LoadFXML;
 import aplicacion.CustomersLogic;
 import aplicacion.LogicLayerException;
 import aplicacion.modelo.Customer;
@@ -15,8 +16,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -27,7 +30,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
  * @author Cole
  */
 public class ClientesController extends PresentationLayer implements Initializable {
-
+    
+    private LoadFXML loadFXML = new LoadFXML();
+    
     @FXML
     private TableView<Customer> tbview_cliente;
     @FXML
@@ -42,13 +47,21 @@ public class ClientesController extends PresentationLayer implements Initializab
     private TableColumn<Customer, String> colum_clienteTargeta;
     @FXML
     private TableColumn<Customer, Double> colum_clienteSaldo;
+    @FXML
+    private Button btn_add;
+    @FXML
+    private Button btn_eliminar;
+    @FXML
+    private Button btn_modificar;
+    @FXML
+    private Button btn_pedidos;
 
     private ObservableList<Customer> lista = FXCollections.observableArrayList();
     
     private CustomersLogic customersLogic;
 
-    public ClientesController()  {
-        
+    public ClientesController() {
+
         try {
             this.customersLogic = new CustomersLogic();
         } catch (LogicLayerException ex) {
@@ -68,14 +81,23 @@ public class ClientesController extends PresentationLayer implements Initializab
         tbview_cliente.setItems(lista);
     }
 
-    
-    private void cargarDatos(){
+    @FXML
+    void btnAddOnAction(ActionEvent event) {
+        loadFXML.openNewWindow("/presentacion/crearModificarCliente.fxml");
+    }
+    @FXML
+    void btnPedidosOnAction(ActionEvent event) {
+
+    }
+
+    private void cargarDatos() {
         try {
             lista.addAll(customersLogic.obtenerDatos());
         } catch (LogicLayerException ex) {
             ex.getMessage();
         }
     }
+
     @Override
     public void close() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
