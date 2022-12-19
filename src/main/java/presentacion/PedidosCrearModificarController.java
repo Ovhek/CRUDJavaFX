@@ -88,7 +88,7 @@ public class PedidosCrearModificarController extends PresentationLayer implement
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        Manager.getInstance().addController(this);
     }    
 
     /**

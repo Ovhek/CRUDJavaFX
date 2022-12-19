@@ -4,11 +4,16 @@
  */
 package aplicacion;
 
+import aplicacion.modelo.AppConfig;
 import aplicacion.modelo.Customer;
 import datos.CustomersDAO;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
+import presentacion.AppConfigController;
 
 /**
  *
@@ -20,16 +25,38 @@ public class CustomersLogic extends LogicLayer {
         super();
     }
 
-    public boolean introducirCliente(String customerEmail, String idCard, String customerName, String phone, double creditLimit, String birthDate) {
-       if(clienteValido(birthDate)){
-           return true;
-       }
-        
-        return false;
+    public void introducirCliente(String customerEmail, String idCard, String customerName, String phone, double creditLimit, LocalDate birthDate) throws LogicLayerException, CustomerAgeException {
+        if (clienteValido(birthDate)) {
+            try {
+                Customer cliente = new Customer(customerEmail, idCard, customerName, phone, creditLimit, birthDate);
+                this.getCustomersDAO().save(cliente);
+
+            } catch (SQLException e) {
+                throw new LogicLayerException(e.getMessage());
+            }
+        } else {
+            throw new CustomerAgeException("La edad del cliente no es valida");
+        }
+
     }
-    
-    private boolean clienteValido(String birthDate){
-        return true;
+
+    private boolean clienteValido(LocalDate birthDate) {
+        boolean valido = false;
+        AppConfigController appconfig = ((AppConfigController) Manager.getInstance().getController(AppConfigController.class));
+        AppConfig config = ((AppConfigController) Manager.getInstance().getController(AppConfigController.class)).buildAppConfig();
+        int edat = calcularEdat(birthDate);
+        if (edat > config.getMinCustomerAge()) {
+            valido = true;
+        }
+        return valido;
+    }
+
+    private int calcularEdat(LocalDate birthDate) {
+        int edad;
+        LocalDate fecha_actual = LocalDate.now();
+        Period periodo = Period.between(birthDate, fecha_actual);
+        edad = periodo.getYears();
+        return edad;
     }
 
     public List<Customer> obtenerDatos() throws LogicLayerException {

@@ -4,6 +4,8 @@
  */
 package aplicacion.modelo;
 
+import java.time.LocalDate;
+
 /**
  *
  * @author Cole
@@ -15,9 +17,12 @@ public class Customer {
     private String customerName;
     private String phone;
     private double creditLimit;
-    private String birthDate;
+    private LocalDate birthDate;
 
-    public Customer(String customerEmail, String idCard, String customerName, String phone, double creditLimit, String birthDate) {
+    public Customer() {
+    }
+
+    public Customer(String customerEmail, String idCard, String customerName, String phone, double creditLimit, LocalDate birthDate) {
         this.customerEmail = customerEmail;
         this.idCard = idCard;
         this.customerName = customerName;
@@ -46,7 +51,7 @@ public class Customer {
         return creditLimit;
     }
 
-    public String getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
@@ -70,7 +75,7 @@ public class Customer {
         this.creditLimit = creditLimit;
     }
 
-    public void setBirthDate(String birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 

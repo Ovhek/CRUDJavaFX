@@ -6,9 +6,11 @@ package datos;
 
 import aplicacion.modelo.Customer;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +38,7 @@ public class CustomersDAO extends DataLayer implements DAOInterface<Customer> {
             String customerName = result.getString("customerName");
             String phone = result.getString("phone");
             double creditLimit = result.getDouble("creditLimit");
-            String birthDate = result.getDate("birthDate").toString();
+            LocalDate birthDate = Utils.Utils.stringToDate(result.getDate("birthDate").toString());
 
             Customer cliente = new Customer(customerEmail, idCard, customerName, phone, creditLimit, birthDate);
             lista.add(cliente);
@@ -47,7 +49,19 @@ public class CustomersDAO extends DataLayer implements DAOInterface<Customer> {
 
     @Override
     public void save(Customer t) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Connection conecxion = this.getCon();
+        Statement sentencia = conecxion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        sentencia.executeQuery("SELECT * FROM customers");
+        ResultSet result = sentencia.getResultSet();
+        result.moveToInsertRow();
+        result.updateString("customerEmail", t.getCustomerEmail());
+        result.updateString("idCard", t.getIdCard());
+        result.updateString("customerName", t.getCustomerName());
+        result.updateString("phone", t.getPhone());
+        result.updateDouble("creditLimit", t.getCreditLimit());
+        result.updateDate("birthDate", Date.valueOf(t.getBirthDate()));
+        result.insertRow();
+        conecxion.close();
     }
 
     @Override

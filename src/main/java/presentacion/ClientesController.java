@@ -7,10 +7,12 @@ package presentacion;
 import Utils.LoadFXML;
 import aplicacion.CustomersLogic;
 import aplicacion.LogicLayerException;
+import aplicacion.Manager;
 import aplicacion.modelo.Customer;
 import datos.CustomersDAO;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,7 +44,7 @@ public class ClientesController extends PresentationLayer implements Initializab
     @FXML
     private TableColumn<Customer, String> colum_clienteTelf;
     @FXML
-    private TableColumn<Customer, String> colum_clienteNac;
+    private TableColumn<Customer, LocalDate> colum_clienteNac;
     @FXML
     private TableColumn<Customer, String> colum_clienteTargeta;
     @FXML
@@ -61,7 +63,7 @@ public class ClientesController extends PresentationLayer implements Initializab
     private CustomersLogic customersLogic;
 
     public ClientesController() {
-
+        Manager.getInstance().addController(this);
         try {
             this.customersLogic = new CustomersLogic();
         } catch (LogicLayerException ex) {
@@ -88,6 +90,11 @@ public class ClientesController extends PresentationLayer implements Initializab
     @FXML
     void btnPedidosOnAction(ActionEvent event) {
 
+    }
+    
+    public void insertItem(Customer customer){
+        lista.add(customer);
+        tbview_cliente.refresh();
     }
 
     private void cargarDatos() {

@@ -6,6 +6,7 @@ package presentacion;
 
 import Utils.Utils;
 import aplicacion.LogicLayerException;
+import aplicacion.Manager;
 import aplicacion.OrderDetailsLogic;
 import aplicacion.OrdersLogic;
 import aplicacion.modelo.Order;
@@ -45,7 +46,7 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        Manager.getInstance().addController(this);
     }    
     
     /**
@@ -88,7 +89,7 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
     /**
      * Método para manejar el evento de clic del botón Aceptar.
      */
-    @FXML
+   /* @FXML
     void onActionAccept(ActionEvent event) {
        try {
             this.orderDetailsLogic = new OrderDetailsLogic();
@@ -98,9 +99,9 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
         } catch (LogicLayerException ex) {
             Utils.showErrorAlert("Error: " + ex.getMessage());
         }
-    }
+    }*/
 
-    private OrderDetails constructOrderDetails() {
+    /*private OrderDetails constructOrderDetails() {
         //Obtener el id del producto basado 
         /*return new OrderDetails(
                 0,
@@ -108,6 +109,6 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
                 Integer.parseInt(editCantidad.getText()),
                 Integer.parseInt(editPrecioVenta.getText()),
                 0
-        );*/
-    }
+        );
+    }*/
 }

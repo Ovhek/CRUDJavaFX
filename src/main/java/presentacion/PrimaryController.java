@@ -13,46 +13,17 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
 import javax.naming.ldap.ManageReferralControl;
 
-public class PrimaryController extends PresentationLayer implements Initializable{
+public class PrimaryController extends PresentationLayer implements Initializable {
+
     @Override
     public void close() {
-        
+
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         Manager.getInstance().addController(this);
-        addAllControllers();
 
-    }
-
-    private void addAllControllers() {
-        addController("crearModificarCliente.fxml");
-        addController("crearModificarLineaPedidos.fxml");
-        addController("pedidos.fxml");
-        addController("pedidosCrearModificar.fxml");
-        addController("productosCrearModificar.fxml");
-        
-
-    }
-    
-    /**
-     Obtiene el controlador del fxml y lo añadele al singleton
-     * @param fxml Archivo fxml
-     */
-    private void addController(String fxml){
-        Manager manager = Manager.getInstance();
-        manager.addController(this);
-       
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.load(getClass().getResource(fxml).openStream());
-            PresentationLayer controller = (PresentationLayer) fxmlLoader.getController();
-            manager.addController(controller);
-            
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        }
     }
 
 }
