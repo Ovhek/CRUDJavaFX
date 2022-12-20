@@ -11,6 +11,7 @@ package aplicacion;
 public class ProductsLogic extends LogicLayer{
 
     public ProductsLogic() throws LogicLayerException {
+        super();
     }
 
     @Override

@@ -12,24 +12,25 @@
    <children>
       <VBox prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <TableView fx:id="tbview_cliente" prefHeight="355.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
+            <TableView fx:id="tbview_cliente" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
               <columns>
-                <TableColumn prefWidth="75.0" text="Nombre" />
-                <TableColumn prefWidth="140.66665649414062" text="Email" />
-                  <TableColumn prefWidth="103.3333740234375" text="Telefono" />
-                  <TableColumn prefWidth="93.33331298828125" text="F.Nacimiento" />
-                  <TableColumn prefWidth="103.33331298828125" text="Id.Targeta" />
-                  <TableColumn prefWidth="86.0" text="Saldo" />
+                <TableColumn fx:id="colum_clienteNombre" prefWidth="75.0" text="Nombre" />
+                <TableColumn fx:id="colum_clienteEmail" prefWidth="140.66665649414062" text="Email" />
+                  <TableColumn fx:id="colum_clienteTelf" prefWidth="103.3333740234375" text="Telefono" />
+                  <TableColumn fx:id="colum_clienteNac" prefWidth="93.33331298828125" text="F.Nacimiento" />
+                  <TableColumn fx:id="colum_clienteTargeta" prefWidth="103.33331298828125" text="Id.Targeta" />
+                  <TableColumn fx:id="colum_clienteSaldo" prefWidth="86.0" text="Saldo" />
               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                </columnResizePolicy>
             </TableView>
-            <HBox alignment="CENTER_LEFT" spacing="32.0">
+            <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="600.0" spacing="32.0">
                <children>
-                  <Button fx:id="btn_modificar" mnemonicParsing="false" text="Modificar" />
-                  <Button fx:id="btn_pedidos" mnemonicParsing="false" onAction="#onActionPedidos" text="Pedidos" />
-                  <Button fx:id="btn_eliminar" mnemonicParsing="false" text="Eliminar" />
+                  <Button fx:id="btn_add" mnemonicParsing="false" onAction="#btnAddOnAction" text="Añadir" />
+                  <Button fx:id="btn_modificar" mnemonicParsing="false" onAction="#btnModificarOnAction" text="Modificar" />
+                  <Button fx:id="btn_pedidos" mnemonicParsing="false" onAction="#btnPedidosOnAction" text="Pedidos" />
+                  <Button fx:id="btn_eliminar" mnemonicParsing="false" onAction="#btnEliminarOnAction" text="Eliminar" />
                </children>
                <padding>
                   <Insets left="16.0" />
