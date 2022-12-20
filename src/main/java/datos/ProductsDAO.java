@@ -112,7 +112,7 @@ public class ProductsDAO extends DataLayer implements DAOInterface<Product> {
             //Actualizamos el producto
             rs.updateRow();
         }
-        
+
         //Cerrar conexion
         con.close();
     }
@@ -126,7 +126,7 @@ public class ProductsDAO extends DataLayer implements DAOInterface<Product> {
         Statement sentencia;
         //Ejecutamos la consulta
         sentencia = this.getCon().createStatement();
-        sentencia.execute("SELECT * FROM products WHERE productCode = '" + productCode+"'");
+        sentencia.execute("SELECT * FROM products WHERE productCode = '" + productCode + "'");
         ResultSet rs = sentencia.getResultSet();
         //Lo guardamos en ret
         if(rs.next()){
@@ -161,8 +161,7 @@ public class ProductsDAO extends DataLayer implements DAOInterface<Product> {
     }
 
     /**
-     * Método que obtiene un producto específicado por ID 
-     * en la base de datos.
+     * Método que obtiene un producto específicado por ID en la base de datos.
      *
      * @param p producto a obtener.
      * @return producto obtenido.
@@ -182,7 +181,7 @@ public class ProductsDAO extends DataLayer implements DAOInterface<Product> {
         sentencia = this.getCon().createStatement();
         sentencia.execute("SELECT * FROM products WHERE productName = '" + p.getProductName() + "'");
         ResultSet rs = sentencia.getResultSet();
-        
+
         // Si se encontró un producto, asignar sus valores al producto creado
         if (rs.next()) {
 

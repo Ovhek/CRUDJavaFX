@@ -141,7 +141,7 @@ public class ProductosCrearModificarController extends PresentationLayer impleme
 
                     //Miramos si Stock esta por debajo de el minimo default
                     if (Integer.parseInt(editStock.getText()) < stockDefault) {
-                        Utils.showInfoAlert("Stock incorrecto");
+                        Utils.showInfoAlert("El stock debe ser minimo " + stockDefault);
                     } else {
                         /*Dependiendo de si detectase si hemos o no seleccionado un producto
                         sepa que vamos añadir o modificar un producto*/
