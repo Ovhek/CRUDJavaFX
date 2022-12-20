@@ -202,7 +202,7 @@ public class PedidosController extends PresentationLayer implements Initializabl
             btnDelLineaPedido.setDisable(true);
             btnRemoveFilter.setDisable(true);
             
-            customer = ((ClientesController) Manager.getInstance().getController(ClientesController.class)).getSelectedCustomer();
+            customer = ((ClientesController) Manager.getInstance().getController(ClientesController.class)).getSeleccionMode();
             customerEmail = customer.getCustomerEmail();
             txtNombre.setText(customer.getCustomerName());
             txtEmail.setText(customerEmail);
@@ -411,8 +411,11 @@ public class PedidosController extends PresentationLayer implements Initializabl
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    private boolean dontExecute = false;
     @FXML
     void onActionDateFechaFin(ActionEvent event) {
+        if(dontExecute) return;
+        
         if(dateFechaInicio.getValue() == null) return;
         btnRemoveFilter.setDisable(false);
         filtrarPedidos();
@@ -420,6 +423,7 @@ public class PedidosController extends PresentationLayer implements Initializabl
 
     @FXML
     void onActionDateFechaInicio(ActionEvent event) {
+        if(dontExecute) return;
         if(dateFechaFin.getValue() == null) return;
         btnRemoveFilter.setDisable(false);
         filtrarPedidos();
@@ -427,9 +431,11 @@ public class PedidosController extends PresentationLayer implements Initializabl
     
     @FXML
     void onActionRemoveFilter(ActionEvent event) {
+        dontExecute = true;
         dateFechaFin.setValue(null);
         dateFechaInicio.setValue(null);
         tablePedidos.setItems(observableOrders);
+        dontExecute = false;
     }
     
     private void filtrarPedidos() {

@@ -5,11 +5,13 @@
 package presentacion;
 
 import Utils.LoadFXML;
+import Utils.Utils;
 import aplicacion.CustomersLogic;
 import aplicacion.LogicLayerException;
 import aplicacion.Manager;
 import aplicacion.modelo.Customer;
 import datos.CustomersDAO;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -22,10 +24,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -61,9 +65,9 @@ public class ClientesController extends PresentationLayer implements Initializab
     private Button btn_pedidos;
 
     private ObservableList<Customer> lista = FXCollections.observableArrayList();
-
+    private Customer selectedCustomer;
     private CustomersLogic customersLogic;
-
+    
     public ClientesController() {
         Manager.getInstance().addController(this);
         try {
@@ -88,7 +92,7 @@ public class ClientesController extends PresentationLayer implements Initializab
     @FXML
     void btnAddOnAction(ActionEvent event) {
         deselect();
-        loadFXML.openNewWindow("/presentacion/crearModificarCliente.fxml");
+        loadFXML.openNewWindow("presentacion/crearModificarCliente.fxml");
     }
 
     @FXML
@@ -102,7 +106,7 @@ public class ClientesController extends PresentationLayer implements Initializab
                 lista.remove(index);
                 tbview_cliente.refresh();
             } catch (LogicLayerException e) {
-                Utils.Utils.showErrorAlert("Error al elimnar cliente de la base de datos: " + e.getMessage());
+                Utils.showErrorAlert("Error al elimnar cliente de la base de datos: " + e.getMessage());
                 
             }
 
@@ -112,12 +116,20 @@ public class ClientesController extends PresentationLayer implements Initializab
     @FXML
     void btnModificarOnAction(ActionEvent event) {
         if (this.getSeleccionMode() != null) {
-            loadFXML.openNewWindow("/presentacion/crearModificarCliente.fxml");
+            loadFXML.openNewWindow("presentacion/crearModificarCliente.fxml");
         }
     }
 
     @FXML
     void btnPedidosOnAction(ActionEvent event) {
+        selectedCustomer = tbview_cliente.getSelectionModel().getSelectedItem();
+        if(selectedCustomer == null) return;
+        try {
+            Scene pedidos = new Scene(new FXMLLoader(this.getClass().getClassLoader().getResource("presentacion/pedidos.fxml")).load());
+           ((Stage)this.btn_add.getScene().getWindow()).setScene(pedidos);
+        } catch (IOException ex) {
+            Utils.showErrorAlert("Error, el archivo no existe. " + ex.getMessage());
+        }
 
     }
     

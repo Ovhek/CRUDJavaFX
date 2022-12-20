@@ -225,9 +225,6 @@ public class AppConfigController extends PresentationLayer implements Initializa
         appConfig.setMinCustomerAge(getMinCustomerAge());
         appConfig.setMaxLinesPerOrder(getMaxLinesPerOrder());
         appConfig.setMaxOrderAmount(getMaxOrderAmount());
-        
         return appConfig;
-        
-        
     }
 }

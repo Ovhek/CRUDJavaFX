@@ -34,6 +34,11 @@ public abstract class DataLayer {
             this.con = MySQLConnector.ConnectarBD(db, user, password);
         }
     }
+    public void createConection() throws SQLException{
+        if (con.isClosed()){
+            this.con = MySQLConnector.ConnectarBD(db, user, password);
+        }
+    }
 
     public Connection getCon() {
         return con;

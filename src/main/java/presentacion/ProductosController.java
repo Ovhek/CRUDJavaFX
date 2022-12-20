@@ -24,6 +24,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -61,12 +62,18 @@ public class ProductosController extends PresentationLayer implements Initializa
     @FXML
     private TableView tblProductos;
 
+    private Product prductoSeleccionado = null;
+
+    public Product getPrductoSeleccionado() {
+        return prductoSeleccionado;
+    }
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        Manager.getInstance().addController(this);
         try {
 
             this.productsLogic = new ProductsLogic();
@@ -91,57 +98,89 @@ public class ProductosController extends PresentationLayer implements Initializa
 
     @FXML
     void onActionAdd(ActionEvent event) throws SQLException {
-
+        //Si hay algo seleccionado lo deseleccionamos para en el controller del pop up
+        //poder diferenciar por esta condicion si agregar un producto o modificarlo
+        deselect();
         //creamos un loader al que le pasaremos la ruta para ir a la pantalla que queremos 
         LoadFXML loader = new LoadFXML();
-        loader.openNewWindow("/presentacion/productosCrearModificar.fxml");
-        
+        loader.openNewWindow("presentacion/productosCrearModificar.fxml");
+
         Product p = ((ProductosCrearModificarController) Manager.getInstance().getController(ProductosCrearModificarController.class)).getData();
+        if(p == null) return;
         try {
-            
             this.productsLogic = new ProductsLogic();
             Product pFinal = this.productsLogic.getProducto(p);
-            
+
             this.elements.add(pFinal);
             tblProductos.setItems(elements);
         } catch (LogicLayerException ex) {
             Logger.getLogger(ProductosController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
-    }
-
-    @FXML
-    void onActionModificar(ActionEvent event) {
-
-        ProductosCrearModificarController controller = (ProductosCrearModificarController) Manager.getInstance().getController(ProductosCrearModificarController.class);
-        Product p = (Product) tblProductos.getSelectionModel().getSelectedItem();
-        controller.setData(p);
-
-        LoadFXML loader = new LoadFXML();
-        loader.openNewWindow("/presentacion/productosCrearModificar.fxml");
 
     }
 
     @FXML
-    void onActionEliminar(ActionEvent event) throws LogicLayerException, SQLException {
+    void onActionModificar(ActionEvent event) throws SQLException {
+
+        Product pSeleccionado = getProductoFromTable();
+
+        if (pSeleccionado == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText(null);
+            alert.setTitle("Error");
+            alert.setContentText("No hay producto seleccionado");
+            alert.showAndWait();
+        } else {
+
+            this.prductoSeleccionado = pSeleccionado;
+            LoadFXML loader = new LoadFXML();
+            loader.openNewWindow("presentacion/productosCrearModificar.fxml");
+
+            Product p = ((ProductosCrearModificarController) Manager.getInstance().getController(ProductosCrearModificarController.class)).getData();
+            
+            Product pModificar = elements.get(tblProductos.getSelectionModel().getSelectedIndex());
+            
+            pModificar.setProductName(p.getProductName());
+            pModificar.setProductDescription(p.getProductDescription());
+            pModificar.setQuantityInStock(p.getQuantityInStock());
+            pModificar.setBuyPrice(p.getBuyPrice());
+            this.prductoSeleccionado = null;
+            tblProductos.refresh();
+        }
+    }
+
+    //creamos la accion de eliminar productos de la tabla y de la base de datos 
+    @FXML
+    void onActionEliminar(ActionEvent event) {
         Product p = getProductoFromTable();
 
-        this.productsLogic = new ProductsLogic();
-        
-        productsLogic.eliminaProducto(p);
-        this.elements.remove(p);
-        tblProductos.setItems(elements);
+        if (p == null) {
+            Utils.Utils.showInfoAlert("Error: No hay producto seleccionado");
+        } else {
+            try {
+                this.productsLogic = new ProductsLogic();
+                productsLogic.eliminaProducto(p);
+                this.elements.remove(p);
+                tblProductos.refresh();
+            } catch (LogicLayerException ex) {
+                Utils.Utils.showErrorAlert("Error: " + ex.getMessage());
+            }
+        }
 
     }
 
-    //sacar seleccionado en la tabla
+    //sacar producto seleccionado en la tabla
     private Product getProductoFromTable() {
         Product ret = null;
 
         ret = (Product) tblProductos.getSelectionModel().getSelectedItem();
 
         return ret;
+    }
+
+    //Funcion que me desselecciona la tabla
+    private void deselect() {
+        this.tblProductos.getSelectionModel().clearSelection();
     }
 
     @Override

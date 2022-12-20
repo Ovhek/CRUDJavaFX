@@ -78,11 +78,5 @@ public class Product {
     public void setBuyPrice(float buyPrice) {
         this.buyPrice = buyPrice;
     }
-
-    @Override
-    public String toString() {
-        return "Product{" + "productCode=" + productCode + ", productName=" + productName + ", productDescription=" + productDescription + ", quantityInStock=" + quantityInStock + ", buyPrice=" + buyPrice + '}';
-    }
-    
-    
+        
 }
