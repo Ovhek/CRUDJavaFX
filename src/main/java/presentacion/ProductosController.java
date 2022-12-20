@@ -105,8 +105,6 @@ public class ProductosController extends PresentationLayer implements Initializa
         LoadFXML loader = new LoadFXML();
         loader.openNewWindow("/presentacion/productosCrearModificar.fxml");
 
-//        ProductosCrearModificarController pasarElements = ((ProductosCrearModificarController) Manager.getInstance().getController(ProductosCrearModificarController.class));
-//        pasarElements.initAttributes(elements);
         Product p = ((ProductosCrearModificarController) Manager.getInstance().getController(ProductosCrearModificarController.class)).getData();
         try {
             this.productsLogic = new ProductsLogic();

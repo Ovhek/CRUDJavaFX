@@ -52,22 +52,28 @@ public class ProductosCrearModificarController extends PresentationLayer impleme
     @FXML
     private TextField editStock;
 
+    //data sera un objeto de clase producto a con la que trabajaremos en el fichero
     private Product data;
-    private ObservableList<Product> listas;
+    //variable en la que guardaremos el id de el producto a la hora de modificar
+    //producto en la base de datos
     private int idProducto;
 
+    //hacemos el get para poder llamar a 
     public Product getData() {
         return data;
     }
 
-    public void autofillProducto() {
-        //
+    public void autofillProducto() throws LogicLayerException {
+        //Controlador para poder trabajar con las funciones de ProductosController
         ProductosController productoController = ((ProductosController) Manager.getInstance().getController(ProductosController.class));
+        //Sacamos el producto seleccionado de prodctoController
         Product producto = productoController.getPrductoSeleccionado();
+        this.productsLogic = new ProductsLogic();
+        int stockDefault = this.productsLogic.verStockDefault();
         if (producto == null) {
             this.idProducto = 0;
             this.editNombre.setText(null);
-            this.editStock.setText(null);
+            this.editStock.setText(Integer.toString(stockDefault));
             this.editPrecio.setText(null);
             this.editDescripcion.setText(null);
         } else {
@@ -85,27 +91,50 @@ public class ProductosCrearModificarController extends PresentationLayer impleme
         //generamos la instancia al ejecutar la pantalla
         Manager.getInstance().addController(this);
 
-        //Llamamos a la funcion autofill para que compruebe si tiene que 
-        //rellenar los textField o no 
-        autofillProducto();
+        try {
+            //Llamamos a la funcion autofill para que compruebe si tiene que
+            //rellenar los textField o no
+            autofillProducto();
+        } catch (LogicLayerException ex) {
+            Utils.Utils.showErrorAlert(ex.getMessage());
+        }
 
     }
 
-//    public void initAttributes(ObservableList<Product> listas) {
-//
-//        this.listas = listas;
-//
-//    }
     @FXML
     void onActionAceptar(ActionEvent event) throws SQLException {
-        //Hacemos un controlador de el producto controller para saber si crear
-        //o modificar un producto
-        Product pSeleccionado = ((ProductosController) Manager.getInstance().getController(ProductosController.class)).getPrductoSeleccionado();
-        if (pSeleccionado == null) {
-            crearProducto();
+
+        if (comprobarVacio()) {
+            Utils.Utils.showInfoAlert("Hay algun campo en vacio");
         } else {
-            modificarProducto();
+            //Hacemos un controlador de el producto controller para saber si crear
+            //o modificar un producto
+            Product pSeleccionado = ((ProductosController) Manager.getInstance().getController(ProductosController.class)).getPrductoSeleccionado();
+
+            if ((editStock.getText().matches("/^([0-9])*$/"))
+                    && ((editPrecio.getText().matches("/^([0-9])*$/")))) {
+                if (pSeleccionado == null) {
+                    crearProducto();
+                } else {
+                    modificarProducto();
+                }
+            } else {
+                Utils.Utils.showInfoAlert("Stock, o precio no son numeros");
+            }
         }
+
+    }
+
+    public boolean comprobarVacio() {
+
+        if ((editNombre.getText() == null)
+                || (editStock.getText() == null)
+                || (editPrecio.getText() == null)) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     public void crearProducto() throws SQLException {
@@ -120,28 +149,19 @@ public class ProductosCrearModificarController extends PresentationLayer impleme
         //asignamos las variables a el constructor de p(producto) sin el codigo(este se auto asignara)
         Product p = new Product(nombreProducto, stockInt, precioFloat, descripcion);
 
-        //Comprobamos que no haya campos vacios
-        if ((editNombre.getText().equals(""))) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText(null);
-            alert.setTitle("Info");
-            alert.setContentText("Algun campo obligatorio esta vacio");
-            alert.showAndWait();
-        } else {
-            //seteamos el producto que hemos guardado en data
-            this.data = p;
-            try {
-                //Llamamos a productsLogic y creamos el producto que acabamos e escribir en la base de datos
-                this.productsLogic = new ProductsLogic();
-                this.productsLogic.addProducto(p);
-            } catch (LogicLayerException ex) {
-                Logger.getLogger(ProductosCrearModificarController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            //Obtenemos la escena en la que estamos y la cerramos
-            Stage stage = (Stage) this.btnAceptar.getScene().getWindow();
-            stage.close();
+        //seteamos el producto que hemos guardado en data
+        this.data = p;
+        try {
+            //Llamamos a productsLogic y creamos el producto que acabamos e escribir en la base de datos
+            this.productsLogic = new ProductsLogic();
+            this.productsLogic.addProducto(p);
+        } catch (LogicLayerException ex) {
+            Logger.getLogger(ProductosCrearModificarController.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        //Obtenemos la escena en la que estamos y la cerramos
+        Stage stage = (Stage) this.btnAceptar.getScene().getWindow();
+        stage.close();
 
     }
 
@@ -155,29 +175,23 @@ public class ProductosCrearModificarController extends PresentationLayer impleme
         String descripcion = this.editDescripcion.getText();
 
         //asignamos las variables a el constructor de p(producto) sin el codigo(este se auto asignara)
-        Product p = new Product(this.idProducto, nombreProducto , descripcion, stockInt, precioFloat);
+        Product p = new Product(this.idProducto, nombreProducto, descripcion, stockInt, precioFloat);
         //Comprobamos que no haya campos vacios
-        if ((editNombre.getText().equals(""))) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText(null);
-            alert.setTitle("Info");
-            alert.setContentText("Algun campo obligatorio esta vacio");
-            alert.showAndWait();
-        } else {
-            //seteamos el producto que hemos guardado en data
-            this.data = p;
-            try {
-                //Llamamos a productsLogic y actualizamos el producto que acabamos e escribir en la base de datos
-                this.productsLogic = new ProductsLogic();
-                this.productsLogic.updateProduto(p);
-            } catch (LogicLayerException ex) {
-                Utils.Utils.showErrorAlert(ex.getMessage());
-                System.out.println(ex.getMessage());
-            }
-            //Obtenemos la escena en la que estamos y la cerramos
-            Stage stage = (Stage) this.btnAceptar.getScene().getWindow();
-            stage.close();
+
+        //seteamos el producto que hemos guardado en data
+        this.data = p;
+        try {
+            //Llamamos a productsLogic y actualizamos el producto que acabamos e escribir en la base de datos
+            this.productsLogic = new ProductsLogic();
+            this.productsLogic.updateProduto(p);
+        } catch (LogicLayerException ex) {
+            Utils.Utils.showErrorAlert(ex.getMessage());
+            System.out.println(ex.getMessage());
         }
+        //Obtenemos la escena en la que estamos y la cerramos
+        Stage stage = (Stage) this.btnAceptar.getScene().getWindow();
+        stage.close();
+
     }
 
     //Action encargado de cerrar la ventana y cancelar la creacion o modificacion de producto
