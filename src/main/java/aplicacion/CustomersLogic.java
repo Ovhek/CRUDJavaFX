@@ -22,32 +22,32 @@ import presentacion.AppConfigController;
  * @author Cole
  */
 public class CustomersLogic extends LogicLayer {
-    
+
     public CustomersLogic() throws LogicLayerException {
         super();
     }
-    
-    public void introducirCliente(String customerEmail, String idCard, String customerName, String phone, double creditLimit, LocalDate birthDate) throws LogicLayerException, CustomerAgeException {
-        if (clienteValido(birthDate)) {
+
+    public void introducirCliente(Customer customer) throws LogicLayerException, CustomerAgeException {
+        if (clienteValido(customer.getBirthDate())) {
             try {
-                Customer cliente = new Customer(customerEmail, idCard, customerName, phone, creditLimit, birthDate);
+                Customer cliente = new Customer(customer.getCustomerEmail(), customer.getIdCard(), customer.getCustomerName(), customer.getPhone(), customer.getCreditLimit(), customer.getBirthDate());
                 this.getCustomersDAO().save(cliente);
-                
+
             } catch (SQLException e) {
                 throw new LogicLayerException(e.getMessage());
             }
         } else {
             throw new CustomerAgeException("La edad del cliente no es valida");
         }
-        
+
     }
-    
-    public void modificarCliente(String customerEmail, String idCard, String customerName, String phone, double creditLimit, LocalDate birthDate) throws LogicLayerException, CustomerAgeException {
-        if (clienteValido(birthDate)) {
+
+    public void modificarCliente(Customer customer) throws LogicLayerException, CustomerAgeException {
+        if (clienteValido(customer.getBirthDate())) {
             try {
-                Customer cliente = new Customer(customerEmail, idCard, customerName, phone, creditLimit, birthDate);
+                Customer cliente = new Customer(customer.getCustomerEmail(), customer.getIdCard(), customer.getCustomerName(), customer.getPhone(), customer.getCreditLimit(), customer.getBirthDate());
                 this.getCustomersDAO().update(cliente);
-                
+
             } catch (SQLException e) {
                 throw new LogicLayerException(e.getMessage());
             }
@@ -55,7 +55,7 @@ public class CustomersLogic extends LogicLayer {
             throw new CustomerAgeException("La edad del cliente no es valida");
         }
     }
-    
+
     public void eliminarCliente(Customer cliente) throws LogicLayerException {
         try {
             this.getCustomersDAO().delete(cliente);
@@ -63,10 +63,9 @@ public class CustomersLogic extends LogicLayer {
             throw new LogicLayerException(e.getMessage());
         }
     }
-    
+
     private boolean clienteValido(LocalDate birthDate) {
         boolean valido = false;
-        AppConfigController appconfig = ((AppConfigController) Manager.getInstance().getController(AppConfigController.class));
         AppConfig config = ((AppConfigController) Manager.getInstance().getController(AppConfigController.class)).buildAppConfig();
         int edat = calcularEdat(birthDate);
         if (edat > config.getMinCustomerAge()) {
@@ -74,7 +73,7 @@ public class CustomersLogic extends LogicLayer {
         }
         return valido;
     }
-    
+
     private int calcularEdat(LocalDate birthDate) {
         int edad;
         LocalDate fecha_actual = LocalDate.now();
@@ -82,7 +81,7 @@ public class CustomersLogic extends LogicLayer {
         edad = periodo.getYears();
         return edad;
     }
-    
+
     public List<Customer> obtenerDatos() throws LogicLayerException {
         ArrayList<Customer> lista = new ArrayList<>();
         try {
@@ -92,10 +91,10 @@ public class CustomersLogic extends LogicLayer {
         }
         return lista;
     }
-    
+
     @Override
     public void close() throws LogicLayerException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
 }

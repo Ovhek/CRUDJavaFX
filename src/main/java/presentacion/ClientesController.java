@@ -85,6 +85,7 @@ public class ClientesController extends PresentationLayer implements Initializab
 
     @FXML
     void btnAddOnAction(ActionEvent event) {
+        deselect();
         loadFXML.openNewWindow("/presentacion/crearModificarCliente.fxml");
     }
 
@@ -105,15 +106,28 @@ public class ClientesController extends PresentationLayer implements Initializab
 
         }
     }
-    
+
     @FXML
     void btnModificarOnAction(ActionEvent event) {
-        loadFXML.openNewWindow("/presentacion/crearModificarCliente.fxml");
+        if (this.getSeleccionMode() != null) {
+            loadFXML.openNewWindow("/presentacion/crearModificarCliente.fxml");
+        }
     }
 
     @FXML
     void btnPedidosOnAction(ActionEvent event) {
 
+    }
+
+    public void modificarItem(Customer customer) {
+        Customer cliente = lista.get(tbview_cliente.getSelectionModel().getSelectedIndex());
+        cliente.setBirthDate(customer.getBirthDate());
+        cliente.setCreditLimit(customer.getCreditLimit());
+        cliente.setCustomerEmail(customer.getCustomerEmail());
+        cliente.setCustomerName(customer.getCustomerName());
+        cliente.setIdCard(customer.getIdCard());
+        cliente.setPhone(customer.getPhone());
+        tbview_cliente.refresh();
     }
 
     public void insertItem(Customer customer) {
@@ -127,6 +141,14 @@ public class ClientesController extends PresentationLayer implements Initializab
         } catch (LogicLayerException ex) {
             ex.getMessage();
         }
+    }
+
+    private void deselect() {
+        tbview_cliente.getSelectionModel().clearSelection();
+    }
+
+    public Customer getSeleccionMode() {
+        return tbview_cliente.getSelectionModel().getSelectedItem();
     }
 
     @Override

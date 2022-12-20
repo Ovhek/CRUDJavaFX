@@ -8,6 +8,7 @@ import aplicacion.CustomerAgeException;
 import aplicacion.CustomersLogic;
 import aplicacion.LogicLayerException;
 import aplicacion.Manager;
+import aplicacion.modelo.AppConfig;
 import aplicacion.modelo.Customer;
 import java.net.URL;
 import java.time.LocalDate;
@@ -19,6 +20,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -66,32 +68,80 @@ public class CrearModificarClienteController extends PresentationLayer implement
                         txtf_clienteSaldo,
                         txtf_clienteTargeta,
                         txtf_clienteTelf));
+
+        Customer selectCustomer = ((ClientesController) Manager.getInstance().getController(ClientesController.class)).getSeleccionMode();
+        if (selectCustomer != null) {
+            autoRelleno(selectCustomer);
+            txtf_clienteEmail.setDisable(true);
+        }else{
+            setDefaultOptions();
+        }
     }
 
     @FXML
     void btnAceptarOnAction(ActionEvent event) {
         if (checkTextFields()) {
             try {
-                this.customersLogic = new CustomersLogic();
-                String customerEmail = txtf_clienteEmail.getText();
-                String idCard = txtf_clienteTargeta.getText();
-                String customerName = txtf_clienteNombre.getText();
-                String phone = txtf_clienteTelf.getText();
-                double credit = Double.parseDouble(txtf_clienteSaldo.getText());
-                LocalDate birthDate = Utils.Utils.stringToDate(txtf_clienteNac.getText());
-                customersLogic.introducirCliente(customerEmail, idCard, customerName, phone, credit, birthDate);
-                Customer cliente = new Customer(customerEmail, idCard, customerName, phone, credit, birthDate);
-                ((ClientesController) Manager.getInstance().getController(ClientesController.class)).insertItem(cliente);
+
+                Customer selection = ((ClientesController) Manager.getInstance().getController(ClientesController.class)).getSeleccionMode();
+                if (selection == null) {
+                    crearCliente();
+                } else {
+                    modificarCliente();
+                }
+
                 this.close();
             } catch (LogicLayerException e) {
                 Utils.Utils.showErrorAlert(e.getMessage());
-       
+
             } catch (CustomerAgeException e) {
                 Utils.Utils.showInfoAlert(e.getMessage());
             }
         } else {
             Utils.Utils.showInfoAlert("Hay campos vacios");
         }
+    }
+
+    private void modificarCliente() throws LogicLayerException, CustomerAgeException {
+        this.customersLogic = new CustomersLogic();
+        Customer cliente = newCustomer();
+        customersLogic.modificarCliente(cliente);
+        ((ClientesController) Manager.getInstance().getController(ClientesController.class)).modificarItem(cliente);
+
+    }
+
+    private void crearCliente() throws LogicLayerException, CustomerAgeException {
+        this.customersLogic = new CustomersLogic();
+        Customer cliente = newCustomer();
+        customersLogic.introducirCliente(cliente);
+        ((ClientesController) Manager.getInstance().getController(ClientesController.class)).insertItem(cliente);
+    }
+
+    private void autoRelleno(Customer customer) {
+        txtf_clienteEmail.setText(customer.getCustomerEmail());
+        txtf_clienteTargeta.setText(customer.getIdCard());
+        txtf_clienteNombre.setText(customer.getCustomerName());
+        txtf_clienteTelf.setText(customer.getPhone());
+        txtf_clienteNac.setText(customer.getBirthDate().toString());
+        txtf_clienteSaldo.setText(String.valueOf(customer.getCreditLimit()));
+    }
+
+    private void setDefaultOptions() {
+
+        double defaultCredit = ((AppConfigController) Manager.getInstance().getController(AppConfigController.class)).buildAppConfig().getDefaultCreditLimit();
+
+        txtf_clienteSaldo.setText(String.valueOf(defaultCredit));
+    }
+
+    private Customer newCustomer() {
+        String customerEmail = txtf_clienteEmail.getText();
+        String idCard = txtf_clienteTargeta.getText();
+        String customerName = txtf_clienteNombre.getText();
+        String phone = txtf_clienteTelf.getText();
+        LocalDate birthDate = Utils.Utils.stringToDate(txtf_clienteNac.getText());
+        double credit = Double.parseDouble(txtf_clienteSaldo.getText());
+        Customer customer = new Customer(customerEmail, idCard, customerName, phone, credit, birthDate);
+        return customer;
     }
 
     @FXML
@@ -101,12 +151,12 @@ public class CrearModificarClienteController extends PresentationLayer implement
 
     private boolean checkTextFields() {
         Iterator i = text_fields.iterator();
-        while(i.hasNext()){
+        while (i.hasNext()) {
             TextField txft = (TextField) i.next();
-            if(txft.getText().isBlank()){
+            if (txft.getText().isBlank()) {
                 return false;
             }
-            
+
         }
 
         return true;

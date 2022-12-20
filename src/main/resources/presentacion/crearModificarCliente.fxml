@@ -15,7 +15,7 @@
             <HBox alignment="CENTER" prefWidth="200.0" spacing="24.0">
                <children>
                   <Label fx:id="lb_clienteNombre" maxWidth="1.7976931348623157E308" text="Nombre:" HBox.hgrow="ALWAYS" />
-                  <TextField fx:id="txtf_clienteNombre" alignment="CENTER_RIGHT" />
+                  <TextField fx:id="txtf_clienteNombre" />
                </children>
             </HBox>
             <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefWidth="200.0" spacing="24.0">
