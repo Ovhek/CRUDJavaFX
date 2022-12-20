@@ -118,6 +118,7 @@ public class ClientesController extends PresentationLayer implements Initializab
     void btnPedidosOnAction(ActionEvent event) {
 
     }
+    
 
     public void modificarItem(Customer customer) {
         Customer cliente = lista.get(tbview_cliente.getSelectionModel().getSelectedIndex());

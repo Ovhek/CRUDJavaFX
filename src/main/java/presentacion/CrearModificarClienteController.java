@@ -16,13 +16,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.stage.Stage;
+import javafx.util.converter.DoubleStringConverter;
 
 /**
  * FXML Controller class
@@ -30,6 +34,8 @@ import javafx.stage.Stage;
  * @author joseb
  */
 public class CrearModificarClienteController extends PresentationLayer implements Initializable {
+
+    final Pattern credit_pattern = Pattern.compile("(6\\.0)|([1-5]\\.[0-9])");
 
     @FXML
     private Button btn_clienteAceptar;
@@ -73,7 +79,7 @@ public class CrearModificarClienteController extends PresentationLayer implement
         if (selectCustomer != null) {
             autoRelleno(selectCustomer);
             txtf_clienteEmail.setDisable(true);
-        }else{
+        } else {
             setDefaultOptions();
         }
     }
