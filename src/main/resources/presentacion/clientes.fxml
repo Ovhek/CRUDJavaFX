@@ -28,9 +28,9 @@
             <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="600.0" spacing="32.0">
                <children>
                   <Button fx:id="btn_add" mnemonicParsing="false" onAction="#btnAddOnAction" text="Añadir" />
-                  <Button fx:id="btn_modificar" mnemonicParsing="false" text="Modificar" />
+                  <Button fx:id="btn_modificar" mnemonicParsing="false" onAction="#btnModificarOnAction" text="Modificar" />
                   <Button fx:id="btn_pedidos" mnemonicParsing="false" onAction="#btnPedidosOnAction" text="Pedidos" />
-                  <Button fx:id="btn_eliminar" mnemonicParsing="false" text="Eliminar" />
+                  <Button fx:id="btn_eliminar" mnemonicParsing="false" onAction="#btnEliminarOnAction" text="Eliminar" />
                </children>
                <padding>
                   <Insets left="16.0" />

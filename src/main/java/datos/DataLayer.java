@@ -12,16 +12,27 @@ import java.sql.SQLException;
  * Capa de datos
  */
 public abstract class DataLayer {
-    
+
     Connection con;
 
+    private String db;
+    private String user;
+    private String password;
+
     public DataLayer() throws SQLException {
-       //TODO: cambiar datos
-       String db = "m03uf6_22_23";
-       String user = "admin";
-       String password = "123456";
+        //TODO: cambiar datos
+        this.db = "m03uf6_22_23";
+        this.user = "admin";
+        this.password = "123456";
         //Intentamos conectar
-        this.con = MySQLConnector.ConnectarBD(db,user,password);
+        this.con = MySQLConnector.ConnectarBD(db, user, password);
+    }
+
+    public void createConecction() throws SQLException {
+
+        if (con.isClosed()) {
+            this.con = MySQLConnector.ConnectarBD(db, user, password);
+        }
     }
 
     public Connection getCon() {
@@ -31,18 +42,18 @@ public abstract class DataLayer {
     public void setCon(Connection _con) {
         con = _con;
     }
-    
-    /***
+
+    /**
+     * *
      * Cerramos la conexión del DAO
+     *
      * @throws java.sql.SQLException
      */
-    public void close() throws SQLException
-    {
-        if (con != null)
-        {
+    public void close() throws SQLException {
+        if (con != null) {
             System.out.println("Cerrando conexión: " + this.con.getMetaData().getURL());
             this.con.close();
         }
     }
-            
+
 }

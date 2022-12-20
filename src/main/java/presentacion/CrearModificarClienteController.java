@@ -85,6 +85,7 @@ public class CrearModificarClienteController extends PresentationLayer implement
                 this.close();
             } catch (LogicLayerException e) {
                 Utils.Utils.showErrorAlert(e.getMessage());
+       
             } catch (CustomerAgeException e) {
                 Utils.Utils.showInfoAlert(e.getMessage());
             }

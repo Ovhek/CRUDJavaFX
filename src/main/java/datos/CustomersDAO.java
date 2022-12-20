@@ -24,7 +24,7 @@ public class CustomersDAO extends DataLayer implements DAOInterface<Customer> {
 
     @Override
     public List<Customer> getAll() throws SQLException {
-
+        this.createConecction();
         Connection conecxion = this.getCon();
 
         Statement sentencia = conecxion.createStatement();
@@ -49,6 +49,7 @@ public class CustomersDAO extends DataLayer implements DAOInterface<Customer> {
 
     @Override
     public void save(Customer t) throws SQLException {
+        this.createConecction();
         Connection conecxion = this.getCon();
         Statement sentencia = conecxion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         sentencia.executeQuery("SELECT * FROM customers");
@@ -66,12 +67,31 @@ public class CustomersDAO extends DataLayer implements DAOInterface<Customer> {
 
     @Override
     public void update(Customer t) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.createConecction();
+        Connection conecxion = this.getCon();
+        Statement sentencia = conecxion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        sentencia.executeQuery("SELECT * FROM customers WHERE customerEmail = '" + t.getCustomerEmail() + "'");
+        ResultSet result = sentencia.getResultSet();
+        if (result.next()) {
+            result.updateString("customerEmail", t.getCustomerEmail());
+            result.updateString("idCard", t.getIdCard());
+            result.updateString("customerName", t.getCustomerName());
+            result.updateString("phone", t.getPhone());
+            result.updateDouble("creditLimit", t.getCreditLimit());
+            result.updateDate("birthDate", Date.valueOf(t.getBirthDate()));
+            result.updateRow();
+        }
+        conecxion.close();
     }
 
     @Override
     public void delete(Customer t) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.createConecction();
+        Connection conecxion = this.getCon();
+        Statement sentencia = conecxion.createStatement();
+        String str_sql = "DELETE FROM customers WHERE customerEmail = '" + t.getCustomerEmail() + "'";
+        sentencia.executeUpdate(str_sql);
+        conecxion.close();
     }
 
     @Override

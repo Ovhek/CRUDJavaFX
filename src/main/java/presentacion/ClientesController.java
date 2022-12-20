@@ -32,9 +32,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
  * @author Cole
  */
 public class ClientesController extends PresentationLayer implements Initializable {
-    
+
     private LoadFXML loadFXML = new LoadFXML();
-    
+
     @FXML
     private TableView<Customer> tbview_cliente;
     @FXML
@@ -59,7 +59,7 @@ public class ClientesController extends PresentationLayer implements Initializab
     private Button btn_pedidos;
 
     private ObservableList<Customer> lista = FXCollections.observableArrayList();
-    
+
     private CustomersLogic customersLogic;
 
     public ClientesController() {
@@ -87,12 +87,36 @@ public class ClientesController extends PresentationLayer implements Initializab
     void btnAddOnAction(ActionEvent event) {
         loadFXML.openNewWindow("/presentacion/crearModificarCliente.fxml");
     }
+
+    @FXML
+    void btnEliminarOnAction(ActionEvent event) {
+        int index = tbview_cliente.getSelectionModel().getSelectedIndex();
+        Customer cliente = tbview_cliente.getSelectionModel().getSelectedItem();
+
+        if (cliente != null) {
+            try {
+                customersLogic.eliminarCliente(cliente);
+                lista.remove(index);
+                tbview_cliente.refresh();
+            } catch (LogicLayerException e) {
+                Utils.Utils.showErrorAlert("Error al elimnar cliente de la base de datos: " + e.getMessage());
+                System.out.println(e.getMessage());
+            }
+
+        }
+    }
+    
+    @FXML
+    void btnModificarOnAction(ActionEvent event) {
+        loadFXML.openNewWindow("/presentacion/crearModificarCliente.fxml");
+    }
+
     @FXML
     void btnPedidosOnAction(ActionEvent event) {
 
     }
-    
-    public void insertItem(Customer customer){
+
+    public void insertItem(Customer customer) {
         lista.add(customer);
         tbview_cliente.refresh();
     }
