@@ -134,8 +134,9 @@ public class AppConfigController extends PresentationLayer implements Initializa
     public int   getMinCustomerAge()          { return Integer.parseInt(editEdadMinimaCliente.getText());}
     public int   getMaxLinesPerOrder()        { return Integer.parseInt(editMaxNumeroLineasPorPedido.getText());}
     public float getMaxOrderAmount()          { return Float.parseFloat(editOrdenesMaximasPedido.getText());}
+    
     /**
-     * Clase que obtiene el objeto appConfig y rellena los datos de la vista.
+     * Función que obtiene el objeto appConfig y rellena los datos de la vista.
      */
     private void initView() {
         try {
@@ -165,7 +166,7 @@ public class AppConfigController extends PresentationLayer implements Initializa
     }
     
     /**
-        Función que se ejecuta al clicar en el botón de guardar o actualizar el appConfig.
+     *   Función que se ejecuta al clicar en el botón de guardar o actualizar el appConfig.
      */
     @FXML
     void onActionAddOrUpdate(ActionEvent event) {
@@ -186,7 +187,7 @@ public class AppConfigController extends PresentationLayer implements Initializa
     }
 
     /**
-        Función encargada de comprobar que todos los textfields están rellenados.
+     *   Función encargada de comprobar que todos los textfields están rellenados.
      */
     private boolean comprobarTextFields() {
         boolean todosAsignados = true;

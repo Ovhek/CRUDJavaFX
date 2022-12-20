@@ -38,12 +38,6 @@ public class Utils {
         showAlert(AlertType.INFORMATION, message);
     }
 
-    public static LocalDate stringToDate(String fecha) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate localDate = LocalDate.parse(fecha, formatter);
-        return localDate;
-    }
-
     /**
      * Función encargada de mostrar una alerta generica.
      *

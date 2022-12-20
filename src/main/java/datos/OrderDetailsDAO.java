@@ -79,7 +79,7 @@ public class OrderDetailsDAO extends DataLayer implements DAOInterface<OrderDeta
 
     /**
      * Actualiza el detalle del pedido 
-     * @param orderDetail Objeto de tipo orderDetail.
+     * @param orderDetails Objeto de tipo orderDetail.
      */
     @Override
     public void update(OrderDetails orderDetails) throws SQLException {
@@ -100,6 +100,11 @@ public class OrderDetailsDAO extends DataLayer implements DAOInterface<OrderDeta
         }
     }
 
+    /**
+     * Función encargada de eliminar un orderDetails.
+     * @param orderDetails objeto a eliminar de la base de datos.
+     * @throws SQLException 
+     */
     @Override
     public void delete(OrderDetails orderDetails) throws SQLException {
         Statement sentencia;
@@ -109,7 +114,12 @@ public class OrderDetailsDAO extends DataLayer implements DAOInterface<OrderDeta
         sentencia.executeUpdate(sqlStr);
     }
 
-
+    /**
+     * Devuelve un detalle de pedido de la base de datos basandose en el objeto orderDetails-
+     * @param order Objeto OrderDetails a obtener de la base de datos.
+     * @return Objeto OrderDetails
+     * @throws SQLException 
+     */
     @Override
     public OrderDetails get(OrderDetails order) throws SQLException {
         OrderDetails orderDetails = null;

@@ -68,6 +68,9 @@ public class ClientesController extends PresentationLayer implements Initializab
     private Customer selectedCustomer;
     private CustomersLogic customersLogic;
     
+    /**
+     * Constructor del controlador, añade el controlador al Manager e instancia un customersLogic.
+     */
     public ClientesController() {
         Manager.getInstance().addController(this);
         try {
@@ -77,6 +80,12 @@ public class ClientesController extends PresentationLayer implements Initializab
         }
     }
 
+    /**
+     * Función que se ejecuta al inicializar el controlador.
+     * Carga en la vista los objetos correspondientes.
+     * @param url
+     * @param rb 
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         colum_clienteNombre.setCellValueFactory(new PropertyValueFactory<>("customerName"));
@@ -89,12 +98,20 @@ public class ClientesController extends PresentationLayer implements Initializab
         tbview_cliente.setItems(lista);
     }
 
+    /**
+     * Función que se ejecuta al clicar el botón Añadir. Abre una nueva ventana.
+     * @param event 
+     */
     @FXML
     void btnAddOnAction(ActionEvent event) {
         deselect();
         loadFXML.openNewWindow("presentacion/crearModificarCliente.fxml");
     }
 
+     /**
+     * Función que se ejecuta al clicar el botón Eliminar. Elimina el cliente.
+     * @param event 
+     */
     @FXML
     void btnEliminarOnAction(ActionEvent event) {
         int index = tbview_cliente.getSelectionModel().getSelectedIndex();
@@ -113,6 +130,10 @@ public class ClientesController extends PresentationLayer implements Initializab
         }
     }
 
+     /**
+     * Función que se ejecuta al clicar el botón Modificar. Abre la ventana correspondiente al FXML crearModificarCliente.
+     * @param event 
+     */
     @FXML
     void btnModificarOnAction(ActionEvent event) {
         if (this.getSeleccionMode() != null) {
@@ -120,6 +141,10 @@ public class ClientesController extends PresentationLayer implements Initializab
         }
     }
 
+    /**
+     * Función que se ejecuta al clicar en el botón "Pedidos". Cambia la escena.
+     * @param event 
+     */
     @FXML
     void btnPedidosOnAction(ActionEvent event) {
         selectedCustomer = tbview_cliente.getSelectionModel().getSelectedItem();
@@ -133,7 +158,10 @@ public class ClientesController extends PresentationLayer implements Initializab
 
     }
     
-
+    /**
+     * Función que modifica un item, actualiza el item de la observable list y actualiza luego la tabla.
+     * @param customer Objeto customer a modificar.
+     */
     public void modificarItem(Customer customer) {
         Customer cliente = lista.get(tbview_cliente.getSelectionModel().getSelectedIndex());
         cliente.setBirthDate(customer.getBirthDate());
@@ -145,11 +173,18 @@ public class ClientesController extends PresentationLayer implements Initializab
         tbview_cliente.refresh();
     }
 
+    /**
+     * inserta un item al observable view y actualiza la tabla
+     * @param customer Objeto customer a insertar.
+     */
     public void insertItem(Customer customer) {
         lista.add(customer);
         tbview_cliente.refresh();
     }
 
+    /**
+     * Obtiene los datos de todos los clientes y los carga en una lista.
+     */
     private void cargarDatos() {
         try {
             lista.addAll(customersLogic.obtenerDatos());
@@ -158,10 +193,17 @@ public class ClientesController extends PresentationLayer implements Initializab
         }
     }
 
+    /**
+     * Limpia la selección del tableview.
+     */
     private void deselect() {
         tbview_cliente.getSelectionModel().clearSelection();
     }
 
+    /**
+     * Obtiene el item seleccionado del tableview
+     * @return 
+     */
     public Customer getSeleccionMode() {
         return tbview_cliente.getSelectionModel().getSelectedItem();
     }

@@ -19,6 +19,11 @@ public abstract class DataLayer {
     private String user;
     private String password;
 
+    /**
+     * Constructor de la capa de datos, realiza la conexión a la base de datos.
+     * IMPORTANTE: MODIFICAR LOS STRINGS ACORDE CON LOS DE TU BASE DE DATOS.
+     * @throws SQLException 
+     */
     public DataLayer() throws SQLException {
         //TODO: cambiar datos
         this.db = "m03uf6_22_23";
@@ -28,22 +33,28 @@ public abstract class DataLayer {
         this.con = MySQLConnector.ConnectarBD(db, user, password);
     }
 
-    public void createConecction() throws SQLException {
-
-        if (con.isClosed()) {
-            this.con = MySQLConnector.ConnectarBD(db, user, password);
-        }
-    }
+    /**
+     * Crea una conexión nueva con la base de datos.
+     * @throws SQLException 
+     */
     public void createConection() throws SQLException{
         if (con.isClosed()){
             this.con = MySQLConnector.ConnectarBD(db, user, password);
         }
     }
 
+    /**
+     * Devuelve la conexión a la base de datos
+     * @return Objeto Conexión.
+     */
     public Connection getCon() {
         return con;
     }
 
+    /**
+     * Establece la conexión.
+     * @param _con 
+     */
     public void setCon(Connection _con) {
         con = _con;
     }

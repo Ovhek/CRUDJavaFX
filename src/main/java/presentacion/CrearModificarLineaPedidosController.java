@@ -123,7 +123,7 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
     }
 
     /**
-     * Método para manejar el evento de clic del botón Aceptar.
+     * Método para manejar el evento de clic del botón Aceptar. Realiza las comprobaciones necesarias y añade el detalle del pedido a la base de datos.
      */
     @FXML
     void onActionAccept(ActionEvent event) {
@@ -169,6 +169,9 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
         }
     }
 
+    /**
+     * Función que verifica si el total del importe de los detalles del pedido superan a la variable del appConfig.
+     */
     private void checkMaxOrderAmount() {
         if (controller.getImporteTotal()+(Integer.parseInt(editCantidad.getText())*Float.parseFloat(editPrecioVenta.getText()))  >= appConfig.getMaxOrderAmount()) {
             Utils.showInfoAlert(String.format("Has superado el importe máximo para este pedido. el importe máximo es %.0f", appConfig.getMaxOrderAmount()));
@@ -176,6 +179,11 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
         }
     }
 
+    /**
+     * Función que se ejecuta al seleccionar un item en el comboBox.
+     * Se encarga de obtener el precio de venta de ese producto y añadirlo al textfield correspondiente.
+     * @param event 
+     */
     @FXML
     void onActionComboProductSelected(ActionEvent event) {
         Product selectedProduct = products.stream().filter(product -> product.getProductName().equals(comboCodProducto.getSelectionModel().getSelectedItem())).findFirst().get();
@@ -183,6 +191,10 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
         editPrecioVenta.setText(String.valueOf(precioDeVenta));
     }
 
+    /**
+     * Construye un detalle de pedido según los datos de la vista.
+     * @return  objeto OrderDetails
+     */
     private OrderDetails constructOrderDetails() {
 
         int productCode = products.stream().filter(product -> product.getProductName().equals(comboCodProducto.getSelectionModel().getSelectedItem()))

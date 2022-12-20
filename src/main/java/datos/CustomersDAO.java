@@ -15,16 +15,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DAO de Customers
- */
+* Clase de acceso a datos de clientes.
+*/
 public class CustomersDAO extends DataLayer implements DAOInterface<Customer> {
 
     public CustomersDAO() throws SQLException {
     }
 
+    /**
+     * Devuelve todos los clientes de la base de datos.
+     * @return Lista de todos los clientes.
+     */
     @Override
     public List<Customer> getAll() throws SQLException {
-        this.createConecction();
+        this.createConection();
         Connection conecxion = this.getCon();
 
         Statement sentencia = conecxion.createStatement();
@@ -38,7 +42,7 @@ public class CustomersDAO extends DataLayer implements DAOInterface<Customer> {
             String customerName = result.getString("customerName");
             String phone = result.getString("phone");
             double creditLimit = result.getDouble("creditLimit");
-            LocalDate birthDate = Utils.Utils.stringToDate(result.getDate("birthDate").toString());
+            LocalDate birthDate = result.getDate("birthDate").toLocalDate();
 
             Customer cliente = new Customer(customerEmail, idCard, customerName, phone, creditLimit, birthDate);
             lista.add(cliente);
@@ -47,9 +51,13 @@ public class CustomersDAO extends DataLayer implements DAOInterface<Customer> {
         return lista;
     }
 
+    /**
+     * Guarda un cliente en la base de datos.
+     * @param t objeto cliente a guardar.
+     */
     @Override
     public void save(Customer t) throws SQLException {
-        this.createConecction();
+        this.createConection();
         Connection conecxion = this.getCon();
         Statement sentencia = conecxion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         sentencia.executeQuery("SELECT * FROM customers");
@@ -65,9 +73,13 @@ public class CustomersDAO extends DataLayer implements DAOInterface<Customer> {
         conecxion.close();
     }
 
+    /**
+     * Actualiza un cliente de la base de datos.
+     * @param t Objeto cliente a actualizar.
+     */
     @Override
     public void update(Customer t) throws SQLException {
-        this.createConecction();
+        this.createConection();
         Connection conecxion = this.getCon();
         Statement sentencia = conecxion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         sentencia.executeQuery("SELECT * FROM customers WHERE customerEmail = '" + t.getCustomerEmail() + "'");
@@ -84,9 +96,13 @@ public class CustomersDAO extends DataLayer implements DAOInterface<Customer> {
         conecxion.close();
     }
 
+    /**
+     * Elimina un cliente de la base de datos.
+     * @param t Objeto representativo del cliente.
+     */
     @Override
     public void delete(Customer t) throws SQLException {
-        this.createConecction();
+        this.createConection();
         Connection conecxion = this.getCon();
         Statement sentencia = conecxion.createStatement();
         String str_sql = "DELETE FROM customers WHERE customerEmail = '" + t.getCustomerEmail() + "'";
@@ -94,6 +110,9 @@ public class CustomersDAO extends DataLayer implements DAOInterface<Customer> {
         conecxion.close();
     }
 
+    /**
+     * Función no implementada.
+     */
     @Override
     public Customer get(Customer t) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
