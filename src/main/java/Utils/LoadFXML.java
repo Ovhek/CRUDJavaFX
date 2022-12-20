@@ -13,47 +13,43 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
- * Función encargada de cargar FXMLS
- * @author Cole
+ * Clase encargada de cargar archivos FXML en una aplicación JavaFX.
  */
 public class LoadFXML {
-    
+
     /**
-     Abre una nueva ventana.
-     * @param fxml dirección del fxml
+     * Abre una nueva ventana en la aplicación, cargando el contenido del archivo FXML especificado.
+     * @param fxml Dirección del archivo FXML a cargar.
      */
     public void openNewWindow(String fxml){
-                //Abrir pantalla nueva
         try {
-            //Creamos el loader y el controlador para trabajar con la pantalla que abriremos 
-            //y traernos parametros
-            FXMLLoader loader = new FXMLLoader(this.getClass().getResource(fxml));
+            // Creamos el loader para trabajar con la pantalla que abriremos
+            FXMLLoader loader = new FXMLLoader(this.getClass().getClassLoader().getResource(fxml));
 
-
-            //Con root haremos referencia al padre y lo cargaremos
-            //Al hacer esto netBeans nos pedira hacer un try catch 
+            // Con root haremos referencia al padre y lo cargaremos
             Parent root = loader.load();
-            
+
+            // Verificamos si el controlador ya ha sido cargado antes
             Object tempController = null;
-            
-            var managerController = Manager.getInstance().getController(loader.getClass());
+            var managerController = Manager.getInstance().getController(loader.getController().getClass());
             
             if( managerController == null)
                 tempController = loader.getController();
             else tempController = managerController;
             
-            loader.setController(Manager.getInstance().getController(tempController.getClass()));
-            //Creams scene y stage para trabajar con otra pantalla
-            //creamos una escena que vendra del padre
+            // Asignamos el controlador al loader
+            loader.setController(tempController);
+            
+            // Creamos una escena y un stage para trabajar con otra pantalla
             Scene scene = new Scene(root);
             Stage stage = new Stage();
-            //el dialogo lo hacemos modal(significa que cuando yo lo habra, hasta que yo no termine con el no me deje)
+            
+            // Hacemos el diálogo modal (significa que cuando se abra, hasta que no se cierre no se podrá interactuar con otras pantallas)
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
             stage.showAndWait();
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
-
     }
 }

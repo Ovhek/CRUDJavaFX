@@ -18,6 +18,18 @@ public class AppConfig {
     int maxLinesPerOrder;
     float maxOrderAmount;
 
+    public AppConfig(float defaultCreditLimit, int defaultQuantityInStock, int defaultQuantityOrdered, int defaultProductBanefit, int minShippingHours, int minCustomerAge, int maxLinesPerOrder, float maxOrderAmount) {
+        this.defaultCreditLimit = defaultCreditLimit;
+        this.defaultQuantityInStock = defaultQuantityInStock;
+        this.defaultQuantityOrdered = defaultQuantityOrdered;
+        this.defaultProductBanefit = defaultProductBanefit;
+        this.minShippingHours = minShippingHours;
+        this.minCustomerAge = minCustomerAge;
+        this.maxLinesPerOrder = maxLinesPerOrder;
+        this.maxOrderAmount = maxOrderAmount;
+    }
+
+    
     public AppConfig() {
     }
 

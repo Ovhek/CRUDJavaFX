@@ -4,11 +4,22 @@
  */
 package aplicacion;
 
+import aplicacion.modelo.Product;
+import datos.ProductsDAO;
+import java.nio.file.Files;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.collections.ObservableList;
+
 /**
  *
  * @author Cole
  */
-public class ProductsLogic extends LogicLayer{
+public class ProductsLogic extends LogicLayer {
+
+    ObservableList<Product> listaProductos;
 
     public ProductsLogic() throws LogicLayerException {
         super();
@@ -16,7 +27,11 @@ public class ProductsLogic extends LogicLayer{
 
     @Override
     public void close() throws LogicLayerException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            this.getAppConfigDAO().close();
+        } catch (SQLException ex) {
+            throw new LogicLayerException("Error capa logica: " + ex.getMessage());
+        }
     }
-    
+
 }

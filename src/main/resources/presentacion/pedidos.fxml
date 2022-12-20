@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" fx:id="layoutPedidos" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentacion.PedidosController">
+<AnchorPane id="AnchorPane" fx:id="layoutPedidos" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentacion.PedidosController">
    <children>
       <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <content>
@@ -26,13 +26,13 @@
                         <HBox fillHeight="false" maxWidth="150.0" spacing="10.0">
                            <children>
                               <Label maxWidth="1.7976931348623157E308" text="Nombre:" HBox.hgrow="ALWAYS" />
-                              <Label fx:id="txtNombre" alignment="TOP_LEFT" contentDisplay="TOP" maxWidth="1.7976931348623157E308" text="{nombre]" HBox.hgrow="ALWAYS" />
+                              <Label fx:id="txtNombre" alignment="TOP_LEFT" contentDisplay="TOP" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" text="{nombre]" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
                         <HBox fillHeight="false" maxWidth="150.0" spacing="10.0">
                            <children>
                               <Label maxWidth="1.7976931348623157E308" text="Email:" HBox.hgrow="ALWAYS" />
-                              <Label fx:id="txtEmail" contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" text="{email}" HBox.hgrow="ALWAYS" />
+                              <Label fx:id="txtEmail" contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" text="{email}" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
                      </children>
@@ -51,30 +51,35 @@
                                     <Font name="System Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                              <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                  <children>
                                     <Label maxHeight="1.7976931348623157E308" text="Fecha Inicio" HBox.hgrow="ALWAYS" />
-                                    <DatePicker fx:id="dateFechaInicio" HBox.hgrow="ALWAYS">
+                                    <DatePicker fx:id="dateFechaInicio" editable="false" onAction="#onActionDateFechaInicio" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </DatePicker>
-                                    <Label maxHeight="1.7976931348623157E308" text="Fecha Fin">
+                                    <Label maxHeight="1.7976931348623157E308" text="Fecha Fin" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets left="20.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <DatePicker fx:id="dateFechaFin" HBox.hgrow="ALWAYS">
+                                    <DatePicker fx:id="dateFechaFin" editable="false" onAction="#onActionDateFechaFin" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </DatePicker>
+                                    <Button fx:id="btnRemoveFilter" mnemonicParsing="false" onAction="#onActionRemoveFilter" text="X">
+                                       <HBox.margin>
+                                          <Insets left="20.0" />
+                                       </HBox.margin>
+                                    </Button>
                                  </children>
                                  <VBox.margin>
                                     <Insets bottom="20.0" />
                                  </VBox.margin>
                               </HBox>
-                              <TableView fx:id="tablePedidos" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="400.0" onMouseClicked="#onMouseClickedObtainDetails" VBox.vgrow="ALWAYS">
+                              <TableView fx:id="tablePedidos" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="400.0" VBox.vgrow="ALWAYS">
                                 <columns>
                                   <TableColumn fx:id="columnPedidosID" prefWidth="75.0" text="ID" />
                                   <TableColumn fx:id="columnPedidosFechaPedido" prefWidth="75.0" text="Fecha Pedido" />
@@ -116,7 +121,6 @@
                               </Label>
                               <TableView fx:id="tableLineaPedidos" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="400.0" VBox.vgrow="ALWAYS">
                                 <columns>
-                                  <TableColumn fx:id="columnLineaPedidosNumeroPedido" prefWidth="75.0" text="Numero Producto" />
                                   <TableColumn fx:id="columnLineaPedidosCodigoProducto" prefWidth="75.0" text="Codigo Producto" />
                                     <TableColumn fx:id="columnLineaPedidosNombreProducto" prefWidth="75.0" text="Nombre producto" />
                                     <TableColumn fx:id="columnLineaPedidosCantidad" prefWidth="75.0" text="Cantidad" />
@@ -136,7 +140,7 @@
                                           <Font name="System Bold" size="12.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="txtImporteTotal" maxHeight="1.7976931348623157E308" text="{importe}" />
+                                    <Label fx:id="txtImporteTotal" maxHeight="1.7976931348623157E308" text="0,00€" />
                                  </children>
                                  <VBox.margin>
                                     <Insets top="20.0" />

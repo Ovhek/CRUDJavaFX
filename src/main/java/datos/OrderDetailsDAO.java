@@ -62,14 +62,15 @@ public class OrderDetailsDAO extends DataLayer implements DAOInterface<OrderDeta
         Statement sentencia;
         sentencia = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
         sentencia.executeQuery("SELECT * FROM orderdetails");
+        int orderLineNumber = 0;
         ResultSet rs = sentencia.getResultSet();
-        rs.last();
-        int orderNumber = rs.getInt("orderLineNumber")+1;
-        int orderLineNumber = rs.getInt("orderLineNumber")+1;
+        if(rs.last()){
+            orderLineNumber = rs.getInt("orderLineNumber")+1;
+        }
         rs.moveToInsertRow();
-        rs.updateInt("orderNumber", orderNumber);
+        rs.updateInt("orderNumber", orderDetail.getOrderNumber());
         rs.updateInt("productCode", orderDetail.getProductCode());
-        rs.updateInt("quantitOrdered", orderDetail.getQuantityOrdered());
+        rs.updateInt("quantityOrdered", orderDetail.getQuantityOrdered());
         rs.updateFloat("priceEach", orderDetail.getPriceEach());
         rs.updateInt("orderLineNumber",orderLineNumber);
         

@@ -33,7 +33,13 @@ public class OrdersLogic extends LogicLayer{
         }
     }
     
-        
+    public List<Order> getAll() throws LogicLayerException{        
+        try {
+            return this.getOrdersDAO().getAll();
+        } catch (SQLException ex) {
+            throw new LogicLayerException("Error capa logica: " + ex.getMessage());
+        }
+    } 
     /**
      * Guarda un pedido en la base de datos
      * @param order Objeto de tipo order.

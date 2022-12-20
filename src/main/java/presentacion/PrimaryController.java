@@ -23,7 +23,6 @@ public class PrimaryController extends PresentationLayer implements Initializabl
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         Manager.getInstance().addController(this);
-
     }
 
 }

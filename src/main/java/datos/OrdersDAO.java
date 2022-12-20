@@ -27,7 +27,21 @@ public class OrdersDAO extends DataLayer implements DAOInterface<Order>{
      */
     @Override
     public List<Order> getAll() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        ArrayList<Order> orders = new ArrayList<>();
+        
+        String consulta = "select * from orders";
+        ResultSet rs = this.getCon().createStatement().executeQuery(consulta);
+        
+        while(rs.next()){
+            orders.add(new Order(
+                    rs.getInt("orderNumber"),
+                    rs.getTimestamp("orderDate"),
+                    rs.getTimestamp("requiredDate"),
+                    rs.getTimestamp("shippedDate"),
+                    rs.getString("customers_customerEmail")
+            ));
+        }
+        return orders;
     }
 
     /**
@@ -38,8 +52,7 @@ public class OrdersDAO extends DataLayer implements DAOInterface<Order>{
     public List<Order> getAllByCustomer(Customer customer) throws SQLException{
         ArrayList<Order> orders = new ArrayList<>();
         
-        //TODO: CustomerEmail
-        String consulta = "select * from orders where customers_customerEmail = "+customer.getCustomerEmail();
+        String consulta = "select * from orders where customers_customerEmail = '"+customer.getCustomerEmail()+"'";
         ResultSet rs = this.getCon().createStatement().executeQuery(consulta);
         
         while(rs.next()){
@@ -64,8 +77,12 @@ public class OrdersDAO extends DataLayer implements DAOInterface<Order>{
         sentencia = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
         sentencia.executeQuery("SELECT * FROM orders");
         ResultSet rs = sentencia.getResultSet();
-        rs.last();
-        int orderNumber = rs.getInt("orderNumber")+1;
+        int orderNumber = 0;
+        if(rs.next()){
+            rs.last();
+            orderNumber = rs.getInt("orderNumber")+1;
+            if(orderNumber < order.getOrderNumber()) orderNumber = order.getOrderNumber();
+        }
         rs.moveToInsertRow();
         rs.updateInt("orderNumber", orderNumber);
         rs.updateTimestamp("orderDate", order.getOrderDate());
