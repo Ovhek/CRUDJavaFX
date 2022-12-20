@@ -30,7 +30,7 @@ public class Manager {
             return;
         }
          
-        if(getController(x.getClass()) == null ){
+         if(getController(x.getClass()) == null ){
             this.controllers.add(x);
         }else{
             var a = this.controllers.remove(getController(x.getClass()));

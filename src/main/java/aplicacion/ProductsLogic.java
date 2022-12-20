@@ -20,6 +20,7 @@ public class ProductsLogic extends LogicLayer{
     ObservableList<Product> listaProductos;
 
     public ProductsLogic() throws LogicLayerException {
+        super();
     }
 
     public List<Product> mostrarProductos() throws LogicLayerException{

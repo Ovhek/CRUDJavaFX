@@ -98,7 +98,7 @@ public class ProductosController extends PresentationLayer implements Initializa
 
     @FXML
     void onActionAdd(ActionEvent event) throws SQLException {
-        //Si hay algo seleccionamo lo deseleccionamos para en el controller del pop up
+        //Si hay algo seleccionado lo deseleccionamos para en el controller del pop up
         //poder diferenciar por esta condicion si agregar un producto o modificarlo
         deselect();
         //creamos un loader al que le pasaremos la ruta para ir a la pantalla que queremos 
@@ -108,9 +108,6 @@ public class ProductosController extends PresentationLayer implements Initializa
 //        ProductosCrearModificarController pasarElements = ((ProductosCrearModificarController) Manager.getInstance().getController(ProductosCrearModificarController.class));
 //        pasarElements.initAttributes(elements);
         Product p = ((ProductosCrearModificarController) Manager.getInstance().getController(ProductosCrearModificarController.class)).getData();
-        if (p == null) {
-            return;
-        }
         try {
             this.productsLogic = new ProductsLogic();
             Product pFinal = this.productsLogic.getProducto(p);
@@ -148,6 +145,7 @@ public class ProductosController extends PresentationLayer implements Initializa
             pModificar.setProductDescription(p.getProductDescription());
             pModificar.setQuantityInStock(p.getQuantityInStock());
             pModificar.setBuyPrice(p.getBuyPrice());
+            this.prductoSeleccionado = null;
             tblProductos.refresh();
         }
     }

@@ -2,33 +2,36 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
-<AnchorPane id="AnchorPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/19" fx:controller="presentacion.CrearModificarLineaPedidosController">
+<AnchorPane id="AnchorPane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentacion.CrearModificarLineaPedidosController">
    <children>
       <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <HBox VBox.vgrow="ALWAYS">
                <children>
-                  <Label maxWidth="1.7976931348623157E308" text="Código de Producto:" HBox.hgrow="ALWAYS" />
-                  <TextField />
+                  <Label maxWidth="1.7976931348623157E308" text="Nombre del producto" HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets right="20.0" />
+                     </HBox.margin></Label>
+                  <ComboBox fx:id="comboCodProducto" prefWidth="150.0" />
                </children>
             </HBox>
             <HBox VBox.vgrow="ALWAYS">
                <children>
                   <Label maxWidth="1.7976931348623157E308" text="Cantidad:" HBox.hgrow="ALWAYS" />
-                  <TextField />
+                  <TextField fx:id="editCantidad" />
                </children>
             </HBox>
             <HBox VBox.vgrow="ALWAYS">
                <children>
                   <Label maxWidth="1.7976931348623157E308" text="Precio de venta:" HBox.hgrow="ALWAYS" />
-                  <TextField>
+                  <TextField fx:id="editPrecioVenta">
                      <HBox.margin>
                         <Insets left="20.0" />
                      </HBox.margin>
@@ -37,8 +40,7 @@
             </HBox>
             <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="150.0">
                <children>
-                  <Button mnemonicParsing="false" text="Aceptar" />
-                  <Button mnemonicParsing="false" text="Cancelar" />
+                  <Button fx:id="btnAccept" mnemonicParsing="false" onAction="#onActionAccept" text="Aceptar" />
                </children>
                <VBox.margin>
                   <Insets top="50.0" />

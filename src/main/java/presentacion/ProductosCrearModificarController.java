@@ -54,6 +54,7 @@ public class ProductosCrearModificarController extends PresentationLayer impleme
 
     private Product data;
     private ObservableList<Product> listas;
+    private int idProducto;
 
     public Product getData() {
         return data;
@@ -64,11 +65,13 @@ public class ProductosCrearModificarController extends PresentationLayer impleme
         ProductosController productoController = ((ProductosController) Manager.getInstance().getController(ProductosController.class));
         Product producto = productoController.getPrductoSeleccionado();
         if (producto == null) {
+            this.idProducto = 0;
             this.editNombre.setText(null);
             this.editStock.setText(null);
             this.editPrecio.setText(null);
             this.editDescripcion.setText(null);
         } else {
+            this.idProducto = producto.getProductCode();
             this.editNombre.setText(producto.getProductName());
             this.editStock.setText(Integer.toString(producto.getQuantityInStock()));
             this.editPrecio.setText(Float.toString(producto.getBuyPrice()));
@@ -152,7 +155,7 @@ public class ProductosCrearModificarController extends PresentationLayer impleme
         String descripcion = this.editDescripcion.getText();
 
         //asignamos las variables a el constructor de p(producto) sin el codigo(este se auto asignara)
-        Product p = new Product(nombreProducto, stockInt, precioFloat, descripcion);
+        Product p = new Product(this.idProducto, nombreProducto , descripcion, stockInt, precioFloat);
         //Comprobamos que no haya campos vacios
         if ((editNombre.getText().equals(""))) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -168,6 +171,8 @@ public class ProductosCrearModificarController extends PresentationLayer impleme
                 this.productsLogic = new ProductsLogic();
                 this.productsLogic.updateProduto(p);
             } catch (LogicLayerException ex) {
+                Utils.Utils.showErrorAlert(ex.getMessage());
+                System.out.println(ex.getMessage());
             }
             //Obtenemos la escena en la que estamos y la cerramos
             Stage stage = (Stage) this.btnAceptar.getScene().getWindow();

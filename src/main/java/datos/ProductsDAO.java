@@ -25,6 +25,8 @@ public class ProductsDAO extends DataLayer implements DAOInterface<Product> {
 
     @Override
     public List<Product> getAll() throws SQLException {
+        //abrir conexion
+        this.createConection();
         List<Product> ret = new ArrayList<>();
 
         Statement sentencia;
@@ -36,6 +38,7 @@ public class ProductsDAO extends DataLayer implements DAOInterface<Product> {
             ret.add(new Product(rs.getInt("productCode"), rs.getString("productName"), rs.getString("productDescription"), rs.getInt("quantityInStock"), rs.getFloat("buyPrice")));
         }
 
+        con.close();
         return ret;
     }
 
