@@ -26,7 +26,7 @@ public class App extends Application {
         
         // Ventana Principal
         FXMLLoader fxmlPrimary = loadFXML("primary");
-        scene = new Scene(fxmlPrimary.load());
+        Scene scene = new Scene(fxmlPrimary.load());
         stage.setScene(scene);
         stage.show();
     }
