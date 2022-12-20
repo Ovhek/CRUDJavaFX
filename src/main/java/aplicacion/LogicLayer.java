@@ -12,8 +12,7 @@ import datos.ProductsDAO;
 import java.sql.SQLException;
 
 /**
- *
- * @author Cole
+ * Clase abstracta que representa la capa de lógica del sistema.
  */
 public abstract class LogicLayer {
         
@@ -25,7 +24,6 @@ public abstract class LogicLayer {
 
     /***
      * Connecta con la capa de datos y abre la conexión
-     * 
      * @throws aplicacion.LogicLayerException
      */
     public LogicLayer() throws LogicLayerException { 
@@ -42,6 +40,12 @@ public abstract class LogicLayer {
         }
     }
     
+     /**
+     * Método que formatea una excepción SQL para facilitar su lectura.
+     *
+     * @param ex Excepción SQL a formatear.
+     * @return Cadena de texto con la excepción formateada.
+     */
     public String formatSQLException(SQLException ex)
     {
         String ret = "";
@@ -54,29 +58,53 @@ public abstract class LogicLayer {
         return ret;
     }
 
+    /**
+     * Método que devuelve el objeto que representa el acceso a la configuración de la aplicación en la base de datos.
+     *
+     * @return Objeto que representa la configuración de la aplicación en la base de datos.
+     */
     public AppConfigDAO getAppConfigDAO() {
         return appConfigDAO;
     }
-
+    
+    /**
+     * Método que devuelve el objeto que representa el acceso a los clientes en la base de datos.
+     *
+     * @return Objeto que representa el acceso a los clientes en la base de datos.
+     */
     public CustomersDAO getCustomersDAO() {
         return customersDAO;
     }
-
+    
+    /**
+     * Método que obtiene el objeto que representa el acceso a los detalles de pedidos en la base de datos.
+     *
+     * @return Objeto que representa el acceso a los detalles de pedidos en la base de datos.
+     */
     public OrderDetailsDAO getOrderDetailsDAO() {
         return orderDetailsDAO;
     }
 
+     /**
+     * Método que obtiene el objeto que representa el acceso a los pedidos en la base de datos.
+     *
+     * @return Objeto que representa el acceso a los pedidos en la base de datos.
+     */
     public OrdersDAO getOrdersDAO() {
         return ordersDAO;
     }
 
+     /**
+     * Método que obtiene el objeto que representa el acceso a los productos en la base de datos.
+     *
+     * @return Objeto que representa el acceso a los productos en la base de datos.
+     */
     public ProductsDAO getProductsDAO() {
         return productsDAO;
     }
     
     /***
      * Permite a las clases reimplementar este metodo de cierre. 
-     * 
      */
     public abstract void close() throws LogicLayerException;    
 }

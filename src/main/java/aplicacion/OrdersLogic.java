@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  *
- * @author Cole
+ * Clase encargada de la capa lógica de los pedidos.
  */
 public class OrdersLogic extends LogicLayer{
 

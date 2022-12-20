@@ -170,8 +170,8 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
     }
 
     private void checkMaxOrderAmount() {
-        if (Integer.parseInt(editCantidad.getText()) >= appConfig.getMaxOrderAmount()) {
-            Utils.showInfoAlert(String.format("Has superado la cantidad máxima para este producto. La cantidad máxima es %.0f", appConfig.getMaxOrderAmount()));
+        if (controller.getImporteTotal()+(Integer.parseInt(editCantidad.getText())*Float.parseFloat(editPrecioVenta.getText()))  >= appConfig.getMaxOrderAmount()) {
+            Utils.showInfoAlert(String.format("Has superado el importe máximo para este pedido. el importe máximo es %.0f", appConfig.getMaxOrderAmount()));
             return;
         }
     }

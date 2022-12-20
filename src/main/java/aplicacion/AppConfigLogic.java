@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 
 /**
  * Clase encargada de manejar la capa logica del AppConfig
- * @author Cole
  */
 public class AppConfigLogic extends LogicLayer{
 
@@ -37,6 +36,7 @@ public class AppConfigLogic extends LogicLayer{
     
     /**
      * Guarda en la base de datos el objeto AppConfig pasado por la vista.
+     * @param appConfig objeto AppConfig
      */
     public void save(AppConfig appConfig) throws LogicLayerException{
         try {
@@ -48,6 +48,7 @@ public class AppConfigLogic extends LogicLayer{
     
      /**
      * Actualiza en la base de datos el objeto AppConfig pasado por la vista.
+     * @param appConfig objeto AppConfig
      */
     public void update(AppConfig appConfig) throws LogicLayerException{
         try {
@@ -59,6 +60,7 @@ public class AppConfigLogic extends LogicLayer{
     
      /**
      * Elimina todos los datos de AppConfig
+     * @param appConfig objeto AppConfig
      */
     public void delete(AppConfig appConfig) throws LogicLayerException{
         try {

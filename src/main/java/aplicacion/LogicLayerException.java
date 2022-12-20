@@ -5,18 +5,31 @@
 package aplicacion;
 
 /**
- * Clase de excepciones personalizada para la capa logica
- * 
+ * Clase de excepciones personalizada para la capa lógica.
  */
-public class LogicLayerException extends Exception{
+public class LogicLayerException extends Exception {
     
+    /**
+     * Constructor sin parámetros de la clase.
+     */
     public LogicLayerException() {
     }
 
+    /**
+     * Constructor que recibe un mensaje de error.
+     *
+     * @param message Mensaje de error.
+     */
     public LogicLayerException(String message) {
         super(message);
     }
 
+    /**
+     * Constructor que recibe un mensaje de error y la excepción original que ha ocurrido.
+     *
+     * @param message Mensaje de error.
+     * @param cause Excepción original que ha ocurrido.
+     */
     public LogicLayerException(String message, Throwable cause) {
         super(message, cause);
     }

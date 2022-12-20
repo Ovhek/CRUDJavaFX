@@ -19,15 +19,27 @@ import java.util.logging.Logger;
 import presentacion.AppConfigController;
 
 /**
- *
- * @author Cole
+ * Clase que representa la lógica de negocio relacionada con los clientes.
+ * 
  */
 public class CustomersLogic extends LogicLayer {
 
+    /**
+     * Constructor de la clase.
+     *
+     * @throws LogicLayerException Si hay un error en la capa de lógica.
+     */
     public CustomersLogic() throws LogicLayerException {
         super();
     }
 
+    /**
+     * Método que permite introducir un nuevo cliente en la base de datos.
+     *
+     * @param customer Cliente a introducir.
+     * @throws LogicLayerException Si hay un error en la capa de lógica.
+     * @throws CustomerAgeException Si la edad del cliente no es válida.
+     */
     public void introducirCliente(Customer customer) throws LogicLayerException, CustomerAgeException {
         if (clienteValido(customer.getBirthDate())) {
             try {
@@ -45,6 +57,13 @@ public class CustomersLogic extends LogicLayer {
 
     }
 
+    /**
+     * Método que permite modificar un cliente existente en la base de datos.
+     *
+     * @param customer Cliente a modificar.
+     * @throws LogicLayerException Si hay un error en la capa de lógica.
+     * @throws CustomerAgeException Si la edad del cliente no es válida.
+     */
     public void modificarCliente(Customer customer) throws LogicLayerException, CustomerAgeException {
         if (clienteValido(customer.getBirthDate())) {
             try {
@@ -60,7 +79,12 @@ public class CustomersLogic extends LogicLayer {
             throw new CustomerAgeException("La edad minima del cliente debe ser " + edadMin);
         }
     }
-
+    /**
+     * Método que permite eliminar un cliente de la base de datos.
+     *
+     * @param cliente Cliente a eliminar.
+     * @throws LogicLayerException Si hay un error en la capa de lógica.
+     */
     public void eliminarCliente(Customer cliente) throws LogicLayerException {
         try {
             this.getCustomersDAO().delete(cliente);
@@ -69,6 +93,12 @@ public class CustomersLogic extends LogicLayer {
         }
     }
 
+    /**
+     * Método que verifica si un cliente es válido según su edad.
+     *
+     * @param birthDate Fecha de nacimiento del cliente.
+     * @return {@code true} si el cliente es válido, {@code false} en caso contrario.
+     */
     private boolean clienteValido(LocalDate birthDate) {
         boolean valido = false;
         AppConfig config = ((AppConfigController) Manager.getInstance().getController(AppConfigController.class)).buildAppConfig();
@@ -79,6 +109,12 @@ public class CustomersLogic extends LogicLayer {
         return valido;
     }
 
+    /**
+     * Método que calcula la edad de un cliente a partir de su fecha de nacimiento.
+     *
+     * @param birthDate Fecha de nacimiento del cliente.
+     * @return Edad del cliente.
+     */
     private int calcularEdat(LocalDate birthDate) {
         int edad;
         LocalDate fecha_actual = LocalDate.now();
@@ -87,6 +123,12 @@ public class CustomersLogic extends LogicLayer {
         return edad;
     }
 
+    /**
+     * Método que obtiene todos los clientes de la base de datos.
+     *
+     * @return Lista de clientes.
+     * @throws LogicLayerException Si hay un error en la capa de lógica.
+     */
     public List<Customer> obtenerDatos() throws LogicLayerException {
         ArrayList<Customer> lista = new ArrayList<>();
         try {
@@ -97,6 +139,11 @@ public class CustomersLogic extends LogicLayer {
         return lista;
     }
 
+    /**
+     * Método que cierra la conexión con la base de datos.
+     *
+     * @throws LogicLayerException Si hay un error en la capa de lógica.
+     */
     @Override
     public void close() throws LogicLayerException {
         try {
