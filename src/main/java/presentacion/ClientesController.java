@@ -34,7 +34,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 public class ClientesController extends PresentationLayer implements Initializable {
 
     private LoadFXML loadFXML = new LoadFXML();
-
+   
+    
     @FXML
     private TableView<Customer> tbview_cliente;
     @FXML
@@ -101,7 +102,7 @@ public class ClientesController extends PresentationLayer implements Initializab
                 tbview_cliente.refresh();
             } catch (LogicLayerException e) {
                 Utils.Utils.showErrorAlert("Error al elimnar cliente de la base de datos: " + e.getMessage());
-                System.out.println(e.getMessage());
+                
             }
 
         }

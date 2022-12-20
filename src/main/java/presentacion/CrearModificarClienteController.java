@@ -12,6 +12,7 @@ import aplicacion.modelo.AppConfig;
 import aplicacion.modelo.Customer;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -22,6 +23,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
@@ -35,7 +37,9 @@ import javafx.util.converter.DoubleStringConverter;
  */
 public class CrearModificarClienteController extends PresentationLayer implements Initializable {
 
-    final Pattern credit_pattern = Pattern.compile("(6\\.0)|([1-5]\\.[0-9])");
+    private final String CREDIT_REGEX = "^\\d{1,3}(,?\\d{3})*(\\.\\d{1,2})?$";
+    private final String EMAIL_REGEX = "^(.+)@(.+)$";
+    private final String TELF_REGEX = "^\\d{9}$";
 
     @FXML
     private Button btn_clienteAceptar;
@@ -47,7 +51,7 @@ public class CrearModificarClienteController extends PresentationLayer implement
     private TextField txtf_clienteEmail;
 
     @FXML
-    private TextField txtf_clienteNac;
+    private DatePicker dtpick_cliente;
 
     @FXML
     private TextField txtf_clienteNombre;
@@ -69,7 +73,6 @@ public class CrearModificarClienteController extends PresentationLayer implement
         text_fields = new ArrayList<>(
                 Arrays.asList(
                         txtf_clienteEmail,
-                        txtf_clienteNac,
                         txtf_clienteNombre,
                         txtf_clienteSaldo,
                         txtf_clienteTargeta,
@@ -99,12 +102,10 @@ public class CrearModificarClienteController extends PresentationLayer implement
                 this.close();
             } catch (LogicLayerException e) {
                 Utils.Utils.showErrorAlert(e.getMessage());
-
+                System.out.println(e);
             } catch (CustomerAgeException e) {
                 Utils.Utils.showInfoAlert(e.getMessage());
             }
-        } else {
-            Utils.Utils.showInfoAlert("Hay campos vacios");
         }
     }
 
@@ -128,14 +129,14 @@ public class CrearModificarClienteController extends PresentationLayer implement
         txtf_clienteTargeta.setText(customer.getIdCard());
         txtf_clienteNombre.setText(customer.getCustomerName());
         txtf_clienteTelf.setText(customer.getPhone());
-        txtf_clienteNac.setText(customer.getBirthDate().toString());
+        dtpick_cliente.setValue(customer.getBirthDate());
         txtf_clienteSaldo.setText(String.valueOf(customer.getCreditLimit()));
     }
 
     private void setDefaultOptions() {
 
         double defaultCredit = ((AppConfigController) Manager.getInstance().getController(AppConfigController.class)).buildAppConfig().getDefaultCreditLimit();
-
+        dtpick_cliente.setValue(LocalDate.of(2000, Month.MARCH, 22));
         txtf_clienteSaldo.setText(String.valueOf(defaultCredit));
     }
 
@@ -144,7 +145,7 @@ public class CrearModificarClienteController extends PresentationLayer implement
         String idCard = txtf_clienteTargeta.getText();
         String customerName = txtf_clienteNombre.getText();
         String phone = txtf_clienteTelf.getText();
-        LocalDate birthDate = Utils.Utils.stringToDate(txtf_clienteNac.getText());
+        LocalDate birthDate = dtpick_cliente.getValue();
         double credit = Double.parseDouble(txtf_clienteSaldo.getText());
         Customer customer = new Customer(customerEmail, idCard, customerName, phone, credit, birthDate);
         return customer;
@@ -160,9 +161,23 @@ public class CrearModificarClienteController extends PresentationLayer implement
         while (i.hasNext()) {
             TextField txft = (TextField) i.next();
             if (txft.getText().isBlank()) {
+                Utils.Utils.showInfoAlert("Hay campos vacios");
                 return false;
             }
 
+        }
+
+        if (!txtf_clienteEmail.getText().matches(EMAIL_REGEX)) {
+            Utils.Utils.showInfoAlert("Email incorrecto");
+            return false;
+        }
+        if (!txtf_clienteTelf.getText().matches(TELF_REGEX)) {
+            Utils.Utils.showInfoAlert("Numero de telefono incorrecto");
+            return false;
+        }
+        if (!txtf_clienteSaldo.getText().matches(CREDIT_REGEX)) {
+            Utils.Utils.showInfoAlert("Saldo incorrecto");
+            return false;
         }
 
         return true;

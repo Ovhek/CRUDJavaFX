@@ -8,6 +8,7 @@ import aplicacion.modelo.AppConfig;
 import aplicacion.modelo.Customer;
 import datos.CustomersDAO;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -33,6 +34,8 @@ public class CustomersLogic extends LogicLayer {
                 Customer cliente = new Customer(customer.getCustomerEmail(), customer.getIdCard(), customer.getCustomerName(), customer.getPhone(), customer.getCreditLimit(), customer.getBirthDate());
                 this.getCustomersDAO().save(cliente);
 
+            } catch (SQLIntegrityConstraintViolationException e) {
+                throw new LogicLayerException("El Email introducido ya esta registrado");
             } catch (SQLException e) {
                 throw new LogicLayerException(e.getMessage());
             }
@@ -52,7 +55,9 @@ public class CustomersLogic extends LogicLayer {
                 throw new LogicLayerException(e.getMessage());
             }
         } else {
-            throw new CustomerAgeException("La edad del cliente no es valida");
+            AppConfig config = ((AppConfigController) Manager.getInstance().getController(AppConfigController.class)).buildAppConfig();
+            int edadMin = config.getMinCustomerAge();
+            throw new CustomerAgeException("La edad minima del cliente debe ser " + edadMin);
         }
     }
 
