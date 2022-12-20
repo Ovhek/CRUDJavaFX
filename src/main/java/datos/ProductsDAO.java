@@ -63,18 +63,19 @@ public class ProductsDAO extends DataLayer implements DAOInterface<Product> {
         Statement sentencia;
         sentencia = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         sentencia.executeQuery("SELECT * FROM products");
-        ResultSet rs = sentencia.getResultSet();
-        //Encontramos el ultimo producto
-        rs.last();
-        
+        ResultSet rs = sentencia.getResultSet();       
         //Sacamos el id del ultimo en una variable y le sumamos 1
         //Asi ese ya se lo podremos asignar a el nuevo producto
-        int id = rs.getInt("productCode") + 1;
+        int productCode = 0;
+        if(rs.next()){
+            rs.last();
+            productCode = rs.getInt("productCode") + 1;
+        } 
         //como hemos encontrado el ultimo producto ahora pasamos a la siguiente 
         //casilla en blanco y ahi sera donde insertaremos productos
         rs.moveToInsertRow();
         //Escribimos todos los parametros para añadir el producto
-        rs.updateInt("productCode", id);
+        rs.updateInt("productCode", productCode);
         rs.updateString("productName", p.getProductName());
         rs.updateString("productDescription", p.getProductDescription());
         rs.updateInt("quantityInStock", p.getQuantityInStock());

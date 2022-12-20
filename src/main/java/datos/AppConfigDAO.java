@@ -91,6 +91,10 @@ public class AppConfigDAO extends DataLayer implements DAOInterface<AppConfig>{
         return constructAppConfig(result);
     }
     
+    /**
+     * Función que construye un appConfig desde los controladores.
+     * @return Un objeto AppConfig
+     */
     private AppConfig constructAppConfig(ResultSet result) throws SQLException{
         AppConfig appConfig = null;
         if(result.next()){
