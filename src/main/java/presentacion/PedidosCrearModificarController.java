@@ -131,40 +131,60 @@ public class PedidosCrearModificarController extends PresentationLayer implement
      */
     @FXML
     void onActionAceptar(ActionEvent event) {
+        
+        //Conseguimos el controller de PedidosController
         PedidosController controller = ((PedidosController)Manager.getInstance().getController(PedidosController.class));
         try {
+            //Comprobamos si hay campos vacios
             if(CamposVacios()){
                 Utils.showInfoAlert("Debes rellenar todos los campos.");
                 return;
             }
+            
+            //Creamos conexion con OrdersLogic
             this.ordersLogic = new OrdersLogic();
+            //miramos si order es nulo
             if(order == null){
-                
+                //Creamos nueva order
                 Order newOrder = constructOrder();
+                //Alert que avise si la fecha entre el envío y la llegada es icorrecta
                 if(hoursBetweenTwoDates(newOrder.getOrderDate(),newOrder.getRequiredDate()) < appConfig.getMinShippingHours()){
                     Utils.showInfoAlert(String.format("La fecha entre el envío y la llegada han de ser de al menos %d horas.", appConfig.getMinShippingHours()));
                     return;
                 }
+                //Creamos lista con los orders
                 List<Order> orders =  ordersLogic.getAll();
+                //Hacemos un casteo a pedidos Controller, sacamos las orders y las guardamos en un observable view
                 ObservableList<Order> observableOrders = ((PedidosController)Manager.getInstance().getController(PedidosController.class)).getObservableOrders();
+                
+                //Obtenemos el ultimo orderNum de la dataBase y el observable list
                 int newOrderNumberFromObservableList = observableOrders.get(observableOrders.size()-1).getOrderNumber();
                 int newOrderNumberFromDatabase = orders.get(orders.size()-1).getOrderNumber();
                 
+                //Obtenemos el mayor de los dos ordernum obtenidos y le sumamos 1
                 int newOrderNumber = Integer.max(newOrderNumberFromDatabase, newOrderNumberFromObservableList)+1;
                 newOrder.setOrderNumber(newOrderNumber);
                 controller.addItemToOrders(newOrder);
             }
             else{
+                //modificacion de un order
                 Order newOrder = constructOrder();
                 newOrder.setOrderNumber(order.getOrderNumber());
                 controller.modifyItemOfOrders(order, newOrder);
                 ordersLogic.update(newOrder);
             }
+            //cerramos conexion con ordersLogic
             this.ordersLogic.close();
         } catch (LogicLayerException ex) {
             Utils.showErrorAlert("Error: " + ex.getMessage());
         }
     }
+    /**
+     * Devuelve las horas entre 2 fechas
+     * @param orderDate
+     * @param requiredDate
+     * @return 
+     */
     private int hoursBetweenTwoDates(Timestamp orderDate, Timestamp requiredDate){
         return (int) Duration.between(requiredDate.toLocalDateTime(), orderDate.toLocalDateTime()).toHours();
     }
@@ -188,6 +208,10 @@ public class PedidosCrearModificarController extends PresentationLayer implement
         return Timestamp.from(date.atStartOfDay().toInstant(ZoneOffset.UTC));
     }
 
+    /**
+     * Comprobacion de campos vacios
+     * @return 
+     */
     private boolean CamposVacios() {
         return (dateFechaEnvio.getValue() == null || dateFechaLlegada.getValue() == null || dateFechaPedido.getValue() == null);
     }

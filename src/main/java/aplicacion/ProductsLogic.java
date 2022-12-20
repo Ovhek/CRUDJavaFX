@@ -35,9 +35,10 @@ public class ProductsLogic extends LogicLayer {
         super();
     }
 
-    public int verStockDefault(){
-        return ((AppConfigController)Manager.getInstance().getController(AppConfigController.class)).getDefaultQuantityInStock();
+    public int verStockDefault() {
+        return ((AppConfigController) Manager.getInstance().getController(AppConfigController.class)).getDefaultQuantityInStock();
     }
+
     /**
      * Método que muestra todos los productos.
      *
@@ -46,6 +47,7 @@ public class ProductsLogic extends LogicLayer {
      * recuperar la lista de productos.
      */
     public List<Product> mostrarProductos() throws LogicLayerException {
+        //Devolveremos una lista con los productos, que mostraremos en el tableView
         try {
             List<Product> ret = null;
 
@@ -53,18 +55,27 @@ public class ProductsLogic extends LogicLayer {
 
             return ret;
         } catch (SQLException ex) {
-            throw new LogicLayerException("Error de capa de dades recuperant llista d'oficines : " + ex.toString());
+            throw new LogicLayerException("Error recuperando lista de productos: " + ex.toString());
         }
     }
 
+    /**
+     * Obtiene un producto mediante su código de producto.
+     *
+     * @param productCode Código del producto que se desea obtener.
+     * @return Objeto de la clase Product.
+     * @throws LogicLayerException Si se produce un error al obtener el
+     * producto.
+     */
     public Product getProductoByProductCode(String productCode) throws LogicLayerException {
+        //Hacemos try para capturar la excepcion en caso de error
         try {
+            //llamamos a getByProcutCode pasandole un codigo de producto
             return this.getProductsDAO().getByProductCode(productCode);
         } catch (SQLException ex) {
             throw new LogicLayerException(ex.getMessage());
         }
     }
-
 
     /**
      * Método que añade un producto a la base de datos.
@@ -84,6 +95,7 @@ public class ProductsLogic extends LogicLayer {
      * actualizar el producto.
      */
     public void updateProduto(Product p) throws LogicLayerException {
+        //Hacemos try para capturar la excepcion en caso de error
         try {
             this.getProductsDAO().update(p);
         } catch (SQLException e) {
@@ -110,6 +122,7 @@ public class ProductsLogic extends LogicLayer {
      * @throws SQLException si se produce un error al obtener el producto.
      */
     public void eliminaProducto(Product p) throws LogicLayerException {
+        //Hacemos try para capturar la excepcion en caso de error
         try {
             this.getProductsDAO().delete(p);
         } catch (SQLException ex) {
@@ -117,6 +130,11 @@ public class ProductsLogic extends LogicLayer {
         }
     }
 
+    /**
+     * Cierra la conexión con la base de datos.
+     *
+     * @throws LogicLayerException Si se produce un error al cerrar la conexión.
+     */
     @Override
     public void close() throws LogicLayerException {
         try {

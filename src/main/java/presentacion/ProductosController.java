@@ -41,12 +41,15 @@ import javafx.stage.Stage;
  */
 public class ProductosController extends PresentationLayer implements Initializable {
 
-    // Creacion de observable list(Actuan a modo de arrayList pero en javaFx)
-    // ArrayList elements para todo tipo de gestion con los parametros introducidos y listas
-    // filtroListas servira para la barra de busqueda
-    //Se asignan de clase playlist para trabajar con la clase y su atributos
+    /* Creacion de observable list(Actuan a modo de arrayList pero en javaFx)
+       ArrayList elements para todo tipo de gestion con los parametros introducidos y listas
+       filtroListas servira para la barra de busqueda
+       Se asignan de clase playlist para trabajar con la clase y su atributos*/
     ObservableList<Product> elements = FXCollections.observableArrayList();
 
+    /**
+     * Initializes the controller class.
+     */
     @FXML
     private Button btnAñadir;
 
@@ -76,10 +79,15 @@ public class ProductosController extends PresentationLayer implements Initializa
         Manager.getInstance().addController(this);
         try {
 
+            //Creamos conexion con ProductslLogic
             this.productsLogic = new ProductsLogic();
+            //Creamos la lista donde iran los productos y que mostraremos
             List<Product> listProductos;
 
+            //llamamos a mostrar productos
             listProductos = productsLogic.mostrarProductos();
+            /*recorrecmos la lista de productos y la guardamos producto 
+              a producto en el observable list de elements*/
             listProductos.forEach(x -> this.elements.add(x));
 
             //Establecemos un vinculo entre cada columna de la tabla y cada nombre de el getter de mi clase(Product)
@@ -96,6 +104,11 @@ public class ProductosController extends PresentationLayer implements Initializa
         }
     }
 
+    /**
+     * OnAction con el que añadiremos productos
+     * @param event
+     * @throws SQLException 
+     */
     @FXML
     void onActionAdd(ActionEvent event) throws SQLException {
         //Si hay algo seleccionado lo deseleccionamos para en el controller del pop up
@@ -105,12 +118,16 @@ public class ProductosController extends PresentationLayer implements Initializa
         LoadFXML loader = new LoadFXML();
         loader.openNewWindow("presentacion/productosCrearModificar.fxml");
 
+        //Recogemos el producto que acabamos de crear en una variable sin el ID 
         Product p = ((ProductosCrearModificarController) Manager.getInstance().getController(ProductosCrearModificarController.class)).getData();
+        //Hacemos if por si p es null no pete
         if(p == null) return;
         try {
+            //con p encontramos su producto completo con el codigo incluido y lo guardamos en pFinal
             this.productsLogic = new ProductsLogic();
             Product pFinal = this.productsLogic.getProducto(p);
 
+            //finalmente lo añadimos a la tablaView
             this.elements.add(pFinal);
             tblProductos.setItems(elements);
         } catch (LogicLayerException ex) {
@@ -119,6 +136,11 @@ public class ProductosController extends PresentationLayer implements Initializa
 
     }
 
+    /**
+     * OnAction con el que modificaremos un producto
+     * @param event
+     * @throws SQLException 
+     */
     @FXML
     void onActionModificar(ActionEvent event) throws SQLException {
 
@@ -149,17 +171,26 @@ public class ProductosController extends PresentationLayer implements Initializa
         }
     }
 
-    //creamos la accion de eliminar productos de la tabla y de la base de datos 
+    /**
+     * OnAction con el que eliminaremos un producto
+     * @param event 
+     */
+    
     @FXML
     void onActionEliminar(ActionEvent event) {
+        //Sacamos el producto seleccionado de la tabla
         Product p = getProductoFromTable();
 
+        //si p es null no hemos seleccionado nada
         if (p == null) {
             Utils.Utils.showInfoAlert("Error: No hay producto seleccionado");
         } else {
             try {
+                //Creamos conexion con products logic
                 this.productsLogic = new ProductsLogic();
+                //llamamos a eliminaproducto y le pasamos el que hemos seleccionado
                 productsLogic.eliminaProducto(p);
+                //Lo eliminamos y actualizamos la tabla tambien
                 this.elements.remove(p);
                 tblProductos.refresh();
             } catch (LogicLayerException ex) {

@@ -64,19 +64,26 @@ public class ProductosCrearModificarController extends PresentationLayer impleme
         return data;
     }
 
+    /**
+     * Funcion para rellenar o no los textfield de la pantalla
+     *
+     * @throws LogicLayerException
+     */
     public void autofillProducto() throws LogicLayerException {
         //Controlador para poder trabajar con las funciones de ProductosController
         ProductosController productoController = ((ProductosController) Manager.getInstance().getController(ProductosController.class));
         //Sacamos el producto seleccionado de prodctoController
         Product producto = productoController.getPrductoSeleccionado();
+
         this.productsLogic = new ProductsLogic();
+        //Sacamos el stock default para añadirlo a el textField
         int stockDefault = this.productsLogic.verStockDefault();
         if (producto == null) {
             this.idProducto = 0;
-            this.editNombre.setText(null);
+            this.editNombre.setText("");
             this.editStock.setText(Integer.toString(stockDefault));
-            this.editPrecio.setText(null);
-            this.editDescripcion.setText(null);
+            this.editPrecio.setText("");
+            this.editDescripcion.setText("");
         } else {
             this.idProducto = producto.getProductCode();
             this.editNombre.setText(producto.getProductName());
@@ -87,6 +94,12 @@ public class ProductosCrearModificarController extends PresentationLayer impleme
 
     }
 
+    /**
+     * Funcion que se ejecuta al iniciar la pagina
+     *
+     * @param url
+     * @param rb
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         //generamos la instancia al ejecutar la pantalla
@@ -102,9 +115,16 @@ public class ProductosCrearModificarController extends PresentationLayer impleme
 
     }
 
+    /**
+     * OnAction cuando cliquemos en aceptar
+     *
+     * @param event
+     * @throws SQLException
+     */
     @FXML
     void onActionAceptar(ActionEvent event) throws SQLException {
 
+        //Comprobamos si hay campos importantes vacios
         if (comprobarVacio()) {
             Utils.showInfoAlert("Hay algun campo en vacio");
         } else {
@@ -112,12 +132,30 @@ public class ProductosCrearModificarController extends PresentationLayer impleme
             //o modificar un producto
             Product pSeleccionado = ((ProductosController) Manager.getInstance().getController(ProductosController.class)).getPrductoSeleccionado();
 
+            //Comprobamos que estock y precio sean numeros
             if (Utils.isNumeric(editStock.getText())
-                    && (Utils.isNumeric(editStock.getText()))) {
-                if (pSeleccionado == null) {
-                    crearProducto();
-                } else {
-                    modificarProducto();
+                    && (Utils.isNumeric(editPrecio.getText()))) {
+                try {
+                    this.productsLogic = new ProductsLogic();
+                    int stockDefault = this.productsLogic.verStockDefault();
+
+                    //Miramos si Stock esta por debajo de el minimo default
+                    if (Integer.parseInt(editStock.getText()) < stockDefault) {
+                        Utils.showInfoAlert("Stock incorrecto");
+                    } else {
+                        /*Dependiendo de si detectase si hemos o no seleccionado un producto
+                        sepa que vamos añadir o modificar un producto*/
+                        if (pSeleccionado == null) {
+                            //llamamos a crear producto
+                            crearProducto();
+                        } else {
+                            //llamamos a modificar producto
+                            modificarProducto();
+                        }
+                    }
+
+                } catch (LogicLayerException ex) {
+                    Logger.getLogger(ProductosCrearModificarController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
                 Utils.showInfoAlert("Stock, o precio no son numeros");
@@ -126,11 +164,15 @@ public class ProductosCrearModificarController extends PresentationLayer impleme
 
     }
 
+    /**
+     * Funcion que comprueba campos obligatorios vacios 
+     * @return 
+     */
     public boolean comprobarVacio() {
 
-        if ((editNombre.getText() == null)
-                || (editStock.getText() == null)
-                || (editPrecio.getText() == null)) {
+        if ((editNombre.getText().isBlank())
+                || (editStock.getText().isBlank())
+                || (editPrecio.getText().isBlank())) {
             return true;
         } else {
             return false;
@@ -138,6 +180,10 @@ public class ProductosCrearModificarController extends PresentationLayer impleme
 
     }
 
+    /**
+     * Crear productos en la base de datos
+     * @throws SQLException 
+     */
     public void crearProducto() throws SQLException {
         //Guardamos el contenido de los textField en variables
         String nombreProducto = this.editNombre.getText();
@@ -166,6 +212,10 @@ public class ProductosCrearModificarController extends PresentationLayer impleme
 
     }
 
+    /**
+     * Modificar productos en la base de datos
+     * @throws SQLException 
+     */
     public void modificarProducto() throws SQLException {
         //Guardamos el contenido de los textField en variables
         String nombreProducto = this.editNombre.getText();
