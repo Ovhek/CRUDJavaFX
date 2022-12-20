@@ -33,12 +33,24 @@ import javafx.util.converter.DoubleStringConverter;
 /**
  * FXML Controller class
  *
- * @author joseb
+ * Clase controller de la vista crearModificarClientes.fmxl
  */
 public class CrearModificarClienteController extends PresentationLayer implements Initializable {
-
+    
+    /**
+     * Expresion regular que verifica que el saldo se correcto segun
+     * el formato 000,000.000 
+     */
     private final String CREDIT_REGEX = "^\\d{1,3}(,?\\d{3})*(\\.\\d{1,2})?$";
+    /**
+     * Expresion regular que verifica que el corre electronico
+     * contega al menos un '@' con caracteres a cada lado
+     */
     private final String EMAIL_REGEX = "^(.+)@(.+)$";
+    /**
+     * Expresion regular que verifica que el numero de telefono
+     * tenga 9 caracteres numericos
+     */
     private final String TELF_REGEX = "^\\d{9}$";
 
     @FXML
@@ -67,6 +79,16 @@ public class CrearModificarClienteController extends PresentationLayer implement
 
     private ArrayList<TextField> text_fields;
 
+    /**
+     * Añade el controlador al manager para que se accesible desde otras clases
+     * Crear una coleccion que contiene los TextFields de la vista
+     * Verifica si hay un item selecionado de la tabla clientes, en caso
+     * de que un item este seleccionado rellenera los campos con sus datos,
+     * en caso contrario rellena los campos con los parametros por defecto
+     * ortorgados por la configuracion del programa.
+     * @param url
+     * @param rb
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         Manager.getInstance().addController(this);
@@ -86,7 +108,11 @@ public class CrearModificarClienteController extends PresentationLayer implement
             setDefaultOptions();
         }
     }
-
+    /**
+     * Verifica que los valores de todos los campos sean correctos, si los
+     * parametros son correctos crea o modifca el cliente seleccionado.
+     * @param event 
+     */
     @FXML
     void btnAceptarOnAction(ActionEvent event) {
         if (checkTextFields()) {
@@ -108,7 +134,14 @@ public class CrearModificarClienteController extends PresentationLayer implement
             }
         }
     }
-
+    
+    /**
+     * Crea un nuveo cliente y envia a la capa logica, para verificar las
+     * reglas de negocio y moficarlo en la base de datos.Tambien actualiza
+     * la TableView de clientes.
+     * @throws LogicLayerException
+     * @throws CustomerAgeException 
+     */
     private void modificarCliente() throws LogicLayerException, CustomerAgeException {
         this.customersLogic = new CustomersLogic();
         Customer cliente = newCustomer();
@@ -116,14 +149,24 @@ public class CrearModificarClienteController extends PresentationLayer implement
         ((ClientesController) Manager.getInstance().getController(ClientesController.class)).modificarItem(cliente);
 
     }
-
+    /**
+     * Crea un nuveo cliente y envia a la capa logica, para verificar las
+     * reglas de negocio y insertarlo en la base de datos.Tambien actualiza
+     * la TableView de clientes.
+     * @throws LogicLayerException
+     * @throws CustomerAgeException 
+     */
     private void crearCliente() throws LogicLayerException, CustomerAgeException {
         this.customersLogic = new CustomersLogic();
         Customer cliente = newCustomer();
         customersLogic.introducirCliente(cliente);
         ((ClientesController) Manager.getInstance().getController(ClientesController.class)).insertItem(cliente);
     }
-
+    /**
+     * Rellena todos los campos del formulario con los valores
+     * del argumento(Customer)
+     * @param customer 
+     */
     private void autoRelleno(Customer customer) {
         txtf_clienteEmail.setText(customer.getCustomerEmail());
         txtf_clienteTargeta.setText(customer.getIdCard());
@@ -132,14 +175,20 @@ public class CrearModificarClienteController extends PresentationLayer implement
         dtpick_cliente.setValue(customer.getBirthDate());
         txtf_clienteSaldo.setText(String.valueOf(customer.getCreditLimit()));
     }
-
+    /**
+     * Completa los campos con los valores predeterminados
+     */
     private void setDefaultOptions() {
 
         double defaultCredit = ((AppConfigController) Manager.getInstance().getController(AppConfigController.class)).buildAppConfig().getDefaultCreditLimit();
         dtpick_cliente.setValue(LocalDate.of(2000, Month.MARCH, 22));
         txtf_clienteSaldo.setText(String.valueOf(defaultCredit));
     }
-
+    
+    /**
+     * Devuelve un nuevo cliente a partir de los valores del formulario
+     * @return Customer
+     */
     private Customer newCustomer() {
         String customerEmail = txtf_clienteEmail.getText();
         String idCard = txtf_clienteTargeta.getText();
@@ -155,7 +204,10 @@ public class CrearModificarClienteController extends PresentationLayer implement
     void btnCancerlarOnAction(ActionEvent event) {
         this.close();
     }
-
+    /**
+     * Compreuva que los campos sean correctos
+     * @return True: si los campos son validos, false si son incorrectos
+     */
     private boolean checkTextFields() {
         Iterator i = text_fields.iterator();
         while (i.hasNext()) {
@@ -183,6 +235,9 @@ public class CrearModificarClienteController extends PresentationLayer implement
         return true;
     }
 
+    /**
+     * Cierra la ventana
+     */
     @Override
     public void close() {
         Stage stage = (Stage) this.btn_clienteCancelar.getScene().getWindow();

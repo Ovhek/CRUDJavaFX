@@ -65,16 +65,20 @@ public class ProductsDAO extends DataLayer implements DAOInterface<Product> {
         sentencia.executeQuery("SELECT * FROM products");
         ResultSet rs = sentencia.getResultSet();
         //Encontramos el ultimo producto
-        rs.last();
-        
+
         //Sacamos el id del ultimo en una variable y le sumamos 1
         //Asi ese ya se lo podremos asignar a el nuevo producto
-        int id = rs.getInt("productCode") + 1;
+        int productCode = 0;
+        if (rs.next()) {
+            rs.last();
+            productCode = rs.getInt("productCode") + 1;
+        }
+
         //como hemos encontrado el ultimo producto ahora pasamos a la siguiente 
         //casilla en blanco y ahi sera donde insertaremos productos
         rs.moveToInsertRow();
         //Escribimos todos los parametros para añadir el producto
-        rs.updateInt("productCode", id);
+        rs.updateInt("productCode", productCode);
         rs.updateString("productName", p.getProductName());
         rs.updateString("productDescription", p.getProductDescription());
         rs.updateInt("quantityInStock", p.getQuantityInStock());
@@ -111,23 +115,23 @@ public class ProductsDAO extends DataLayer implements DAOInterface<Product> {
             //Actualizamos el producto
             rs.updateRow();
         }
-        
+
         //Cerrar conexion
         con.close();
     }
 
     public Product getByProductCode(String productCode) throws SQLException {
         Product ret = new Product();
-        
+
         Statement sentencia;
-        
+
         sentencia = this.getCon().createStatement();
-        sentencia.execute("SELECT * FROM products WHERE productCode = '" + productCode+"'");
+        sentencia.execute("SELECT * FROM products WHERE productCode = '" + productCode + "'");
         ResultSet rs = sentencia.getResultSet();
-        if(rs.next()){
+        if (rs.next()) {
             ret = new Product(rs.getInt("productCode"), rs.getString("productName"), rs.getString("productDescription"), rs.getInt("quantityInStock"), rs.getFloat("buyPrice"));
         }
-        
+
         return ret;
     }
 
@@ -153,8 +157,7 @@ public class ProductsDAO extends DataLayer implements DAOInterface<Product> {
     }
 
     /**
-     * Método que obtiene un producto específicado por ID 
-     * en la base de datos.
+     * Método que obtiene un producto específicado por ID en la base de datos.
      *
      * @param p producto a obtener.
      * @return producto obtenido.
@@ -174,7 +177,7 @@ public class ProductsDAO extends DataLayer implements DAOInterface<Product> {
         sentencia = this.getCon().createStatement();
         sentencia.execute("SELECT * FROM products WHERE productName = '" + p.getProductName() + "'");
         ResultSet rs = sentencia.getResultSet();
-        
+
         // Si se encontró un producto, asignar sus valores al producto creado
         if (rs.next()) {
 
