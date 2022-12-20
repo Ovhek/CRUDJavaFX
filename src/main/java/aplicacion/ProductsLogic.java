@@ -37,6 +37,13 @@ public class ProductsLogic extends LogicLayer{
     public void addProducto(Product p) throws SQLException{
         this.getProductsDAO().save(p);
     }
+    public void updateProduto(Product p) throws LogicLayerException{
+        try{
+        this.getProductsDAO().update(p);
+        } catch(SQLException e){
+            throw new LogicLayerException(e.getMessage());
+        }
+    }
     
     public Product getProducto(Product p) throws SQLException{
         return this.getProductsDAO().get(p);

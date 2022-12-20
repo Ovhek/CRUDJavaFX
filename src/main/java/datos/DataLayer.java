@@ -14,14 +14,23 @@ import java.sql.SQLException;
 public abstract class DataLayer {
     
     Connection con;
-
-    public DataLayer() throws SQLException {
+    //TODO: cambiar datos
+       private String db;
+       private String user;
+       private String password;
+       
+    public DataLayer() throws SQLException{
        //TODO: cambiar datos
-       String db = "m03uf6_22_23";
-       String user = "admin";
-       String password = "123456";
+       this.db = "m03uf6_22_23";
+       this.user = "admin";
+       this.password = "123456";
         //Intentamos conectar
         this.con = MySQLConnector.ConnectarBD(db,user,password);
+    }
+    public void createConection() throws SQLException{
+        if (con.isClosed()){
+            this.con = MySQLConnector.ConnectarBD(db, user, password);
+        }
     }
 
     public Connection getCon() {

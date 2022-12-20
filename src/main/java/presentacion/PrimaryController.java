@@ -22,18 +22,12 @@ public class PrimaryController extends PresentationLayer implements Initializabl
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         Manager.getInstance().addController(this);
-        addAllControllers();
+        //addAllControllers();
 
     }
 
     private void addAllControllers() {
-        addController("crearModificarCliente.fxml");
-        addController("crearModificarLineaPedidos.fxml");
-        addController("pedidos.fxml");
-        addController("pedidosCrearModificar.fxml");
-        addController("productosCrearModificar.fxml");
-        
-
+       
     }
     
     /**

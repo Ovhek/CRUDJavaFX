@@ -4,6 +4,7 @@
  */
 package presentacion;
 
+import aplicacion.Manager;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
@@ -21,6 +22,7 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        Manager.getInstance().addController(this);
     }    
 
     @Override

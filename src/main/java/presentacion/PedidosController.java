@@ -121,6 +121,7 @@ public class PedidosController extends PresentationLayer implements Initializabl
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         initListeners();
+        Manager.getInstance().addController(this);
     } 
     
         /**

@@ -23,70 +23,96 @@ public class ProductsDAO extends DataLayer implements DAOInterface<Product> {
     public ProductsDAO() throws SQLException {
     }
 
-
     @Override
     public List<Product> getAll() throws SQLException {
         List<Product> ret = new ArrayList<>();
-        
+
         Statement sentencia;
-        
+
         sentencia = this.getCon().createStatement();
         sentencia.executeQuery("SELECT * FROM products");
         ResultSet rs = sentencia.getResultSet();
-        while (rs.next()){
+        while (rs.next()) {
             ret.add(new Product(rs.getInt("productCode"), rs.getString("productName"), rs.getString("productDescription"), rs.getInt("quantityInStock"), rs.getFloat("buyPrice")));
         }
-        
+
         return ret;
     }
 
     @Override
     public void save(Product p) throws SQLException {
+        //abrir conexion
+        this.createConection();
         Statement sentencia;
         sentencia = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         sentencia.executeQuery("SELECT * FROM products");
         ResultSet rs = sentencia.getResultSet();
         rs.last();
-        int id = rs.getInt("productCode")+1;
+        int id = rs.getInt("productCode") + 1;
         rs.moveToInsertRow();
-        rs.updateInt("ProductCode", id);
-        rs.updateString("ProductName", p.getProductName());
-        rs.updateString("ProductDescription", p.getProductDescription());
-        rs.updateInt("QuantityInStock", p.getQuantityInStock());
-        rs.updateFloat("BuyPrice", p.getBuyPrice());
+        rs.updateInt("productCode", id);
+        rs.updateString("productName", p.getProductName());
+        rs.updateString("productDescription", p.getProductDescription());
+        rs.updateInt("quantityInStock", p.getQuantityInStock());
+        rs.updateFloat("buyPrice", p.getBuyPrice());
         rs.insertRow();
-        
+
+        con.close();
     }
-    
+
     @Override
     public void update(Product p) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        //abrir conexion
+        this.createConection();
+        //Creamos sentencia
+        Statement sentencia;
+        sentencia = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        sentencia.executeQuery("SELECT * FROM products WHERE productCode = " + p.getProductCode());
+        ResultSet rs = sentencia.getResultSet();
+
+        //Cogemos el producto y le actualizamos cada uno de sus parametros
+        if (rs.next()) {
+            rs.updateString("productName", p.getProductName());
+            rs.updateString("productDescription", p.getProductDescription());
+            rs.updateInt("quantityInStock", p.getQuantityInStock());
+            rs.updateDouble("buyPrice", p.getBuyPrice());
+            //Actualizamos el producto
+            rs.updateRow();
+        }
+        con.close();
     }
 
     @Override
     public void delete(Product p) throws SQLException {
+        //abrir conexion
+        this.createConection();
         Statement sentencia;
         sentencia = con.createStatement();
         String sqlStr = "DELETE FROM products WHERE productCode = " + p.getProductCode();
         sentencia.executeUpdate(sqlStr);
-        
+        con.close();
     }
+    
 
     @Override
     public Product get(Product p) throws SQLException {
+        //abrir conexion
+        this.createConection();
         Product ret = new Product();
-        
+
         Statement sentencia;
-        
+
         sentencia = this.getCon().createStatement();
-        sentencia.execute("SELECT * FROM products WHERE productName = '" + p.getProductName()+"'");
+        sentencia.execute("SELECT * FROM products WHERE productName = '" + p.getProductName() + "'");
         ResultSet rs = sentencia.getResultSet();
-        if(rs.next()){
-            
+        if (rs.next()) {
+
             ret = new Product(rs.getInt("productCode"), rs.getString("productName"), rs.getString("productDescription"), rs.getInt("quantityInStock"), rs.getFloat("buyPrice"));
         }
-        
+
+        con.close();
         return ret;
+        
     }
 
 }
