@@ -122,7 +122,7 @@ public class AppConfigController extends PresentationLayer implements Initializa
 
     @Override
     public void close() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
     }
 
     //getters Comunes, obtencion de datos.
@@ -141,9 +141,13 @@ public class AppConfigController extends PresentationLayer implements Initializa
         try {
             this.appConfigLogic = new AppConfigLogic();
             appConfig = appConfigLogic.getAppConfig();
-            this.appConfigLogic.close();
+            
                     
-            if(appConfig == null) return;
+            if(appConfig == null){
+                AppConfig appConfig = new AppConfig(420, 420, 420, 50, 24, 18, 10, 50);
+                appConfigLogic.save(appConfig);
+            }
+            this.appConfigLogic.close();
             
             editBeneficioPredetermiando.setText(""+ appConfig.getDefaultProductBanefit());
             editCantidadProductosPredeterminado.setText(""+appConfig.getDefaultQuantityOrdered());
@@ -156,6 +160,7 @@ public class AppConfigController extends PresentationLayer implements Initializa
         } 
         catch (LogicLayerException ex) {
             Utils.showErrorAlert(ex.getMessage());
+            ((Stage)this.btnAplicar.getScene().getWindow()).close();
         }
     }
     

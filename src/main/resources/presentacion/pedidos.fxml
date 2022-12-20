@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" fx:id="layoutPedidos" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentacion.PedidosController">
+<AnchorPane id="AnchorPane" fx:id="layoutPedidos" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentacion.PedidosController">
    <children>
       <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <content>
@@ -54,7 +54,7 @@
                               <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                  <children>
                                     <Label maxHeight="1.7976931348623157E308" text="Fecha Inicio" HBox.hgrow="ALWAYS" />
-                                    <DatePicker fx:id="dateFechaInicio" editable="false" HBox.hgrow="ALWAYS">
+                                    <DatePicker fx:id="dateFechaInicio" editable="false" onAction="#onActionDateFechaInicio" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets left="10.0" />
                                        </HBox.margin>
@@ -64,11 +64,16 @@
                                           <Insets left="20.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <DatePicker fx:id="dateFechaFin" editable="false" HBox.hgrow="ALWAYS">
+                                    <DatePicker fx:id="dateFechaFin" editable="false" onAction="#onActionDateFechaFin" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </DatePicker>
+                                    <Button fx:id="btnRemoveFilter" mnemonicParsing="false" onAction="#onActionRemoveFilter" text="X">
+                                       <HBox.margin>
+                                          <Insets left="20.0" />
+                                       </HBox.margin>
+                                    </Button>
                                  </children>
                                  <VBox.margin>
                                     <Insets bottom="20.0" />

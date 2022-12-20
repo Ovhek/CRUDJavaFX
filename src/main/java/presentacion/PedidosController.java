@@ -6,7 +6,6 @@ package presentacion;
 
 import Utils.LoadFXML;
 import Utils.Utils;
-import aplicacion.CustomersLogic;
 import aplicacion.LogicLayerException;
 import aplicacion.Manager;
 import aplicacion.OrderDetailsLogic;
@@ -15,17 +14,18 @@ import aplicacion.ProductsLogic;
 import aplicacion.modelo.Customer;
 import aplicacion.modelo.Order;
 import aplicacion.modelo.OrderDetails;
-import aplicacion.modelo.Product;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.Observable;
+import java.util.stream.Collectors;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -34,8 +34,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -45,7 +45,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 /**
  * FXML Controller class
@@ -130,7 +129,20 @@ public class PedidosController extends PresentationLayer implements Initializabl
     private VBox vBox_2;
 
     @FXML
+    private Button btnRemoveFilter;
+    
+    @FXML
+    private DatePicker dateFechaFin;
+
+    @FXML
+    private DatePicker dateFechaInicio;
+    
+    @FXML
     private AnchorPane layoutPedidos;
+    
+    @FXML
+    private Label txtImporteTotal;
+    
 
     private Customer customer = new Customer();
     private LoadFXML loader = new LoadFXML();
@@ -141,6 +153,14 @@ public class PedidosController extends PresentationLayer implements Initializabl
     private ObservableList<OrderDetails> observableDetails;
     private ObservableList<Order> observableOrders;
     private String customerEmail;
+
+    public ObservableList<Order> getObservableOrders() {
+        return observableOrders;
+    }
+
+    public ObservableList<OrderDetails> getObservableDetails() {
+        return observableDetails;
+    }
 
     public Customer getCustomer() {
         return customer;
@@ -162,6 +182,8 @@ public class PedidosController extends PresentationLayer implements Initializabl
         return importeTotal;
     }
 
+
+        
     /**
      * Initializes the controller class.
      */
@@ -174,6 +196,12 @@ public class PedidosController extends PresentationLayer implements Initializabl
 
     private void initView() {
         try {
+            btnModLineaPedido.setDisable(true);
+            btnModPedido.setDisable(true);
+            btnDelPedido.setDisable(true);
+            btnDelLineaPedido.setDisable(true);
+            btnRemoveFilter.setDisable(true);
+            
             customer = ((ClientesController) Manager.getInstance().getController(ClientesController.class)).getSelectedCustomer();
             customerEmail = customer.getCustomerEmail();
             txtNombre.setText(customer.getCustomerName());
@@ -232,7 +260,8 @@ public class PedidosController extends PresentationLayer implements Initializabl
      *
      */
     private void initListeners() {
-        tablePedidos.setOnMouseClicked( e ->{ onMouseClicked(e); });
+        tablePedidos.setOnMouseClicked( e ->{ onMouseClickedPedidos(e); });
+        tableLineaPedidos.setOnMouseClicked( e ->{ onMouseClickedLineaPedidos(e); });
         //Función encargada de comprobar la anchura de la ventana y modificar la posición de los objetos en base a ello.
         layoutPedidos.sceneProperty().addListener((observableScene, oldScene, newScene) -> {
             if (oldScene == null && newScene != null) {
@@ -352,6 +381,7 @@ public class PedidosController extends PresentationLayer implements Initializabl
     public void addItemToOrderDetails(OrderDetails orderDetails) {
         observableDetails.add(orderDetails);
         tableLineaPedidos.refresh();
+        calcularImporteFinal((ArrayList<OrderDetails>) observableDetails.stream().collect(Collectors.toList()));
     }
 
     public void modifyItemOfOrderDetails(OrderDetails oldOrderDetails, OrderDetails newOrderDetails) {
@@ -381,18 +411,71 @@ public class PedidosController extends PresentationLayer implements Initializabl
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    private void onMouseClicked(MouseEvent e) {
+    @FXML
+    void onActionDateFechaFin(ActionEvent event) {
+        if(dateFechaInicio.getValue() == null) return;
+        btnRemoveFilter.setDisable(false);
+        filtrarPedidos();
+    }
+
+    @FXML
+    void onActionDateFechaInicio(ActionEvent event) {
+        if(dateFechaFin.getValue() == null) return;
+        btnRemoveFilter.setDisable(false);
+        filtrarPedidos();
+    }
+    
+    @FXML
+    void onActionRemoveFilter(ActionEvent event) {
+        dateFechaFin.setValue(null);
+        dateFechaInicio.setValue(null);
+        tablePedidos.setItems(observableOrders);
+    }
+    
+    private void filtrarPedidos() {
+        ArrayList<Order> filteredObservableList = (ArrayList<Order>) observableOrders
+                .stream()
+                .filter(order -> 
+                        order.getOrderDate().after(datePickerToTimestamp(dateFechaInicio.getValue())) && 
+                        order.getOrderDate().before(datePickerToTimestamp(dateFechaFin.getValue()))
+                ).collect(Collectors.toList());
+                
+        tablePedidos.setItems(FXCollections.observableArrayList(filteredObservableList));
+    }
+    
+    private Timestamp datePickerToTimestamp(LocalDate date){
+        return Timestamp.from(date.atStartOfDay().toInstant(ZoneOffset.UTC));
+    }
+    
+    private void onMouseClickedPedidos(MouseEvent e) {
         selectedOrder = tablePedidos.getSelectionModel().getSelectedItem();
         observableDetails = FXCollections.observableArrayList();
         if (selectedOrder == null) {
             return;
         }
+        btnModPedido.setDisable(false);
+        btnDelPedido.setDisable(false);
         ArrayList<OrderDetails> orderDetails = selectedOrder.getOrderDetails();
-        if (orderDetails == null) {
-            return;
+        if (orderDetails.size() == 0) {
+            btnDelLineaPedido.setDisable(true);
+            btnModLineaPedido.setDisable(true);
         }
-        orderDetails.forEach(orderDetail -> importeTotal += orderDetail.getQuantityOrdered() * orderDetail.getPriceEach());
+        calcularImporteFinal(orderDetails);
         observableDetails = FXCollections.observableArrayList(orderDetails);
         tableLineaPedidos.setItems(observableDetails);
+    }
+    
+    private void onMouseClickedLineaPedidos(MouseEvent e) {
+        selectedOrderDetails = tableLineaPedidos.getSelectionModel().getSelectedItem();
+        if (selectedOrderDetails == null) {
+            return;
+        }
+        btnDelLineaPedido.setDisable(false);
+        btnModLineaPedido.setDisable(false);
+    }
+    private void calcularImporteFinal(ArrayList<OrderDetails> orderDetails){
+        importeTotal = 0f;
+        orderDetails.forEach(orderDetail -> importeTotal += orderDetail.getQuantityOrdered() * orderDetail.getPriceEach());
+        txtImporteTotal.setText(String.format("%.2f €", importeTotal)) ;
     }
 }

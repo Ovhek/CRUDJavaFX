@@ -5,31 +5,23 @@
 package presentacion;
 
 import Utils.Utils;
-import aplicacion.CustomersLogic;
 import aplicacion.LogicLayerException;
 import aplicacion.Manager;
 import aplicacion.OrdersLogic;
-import aplicacion.modelo.Customer;
+import aplicacion.modelo.AppConfig;
 import aplicacion.modelo.Order;
 import java.net.URL;
 import java.sql.Timestamp;
-import java.time.Instant;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import javafx.beans.Observable;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -86,6 +78,10 @@ public class PedidosCrearModificarController extends PresentationLayer implement
     // Objeto Order que almacena la información del pedido
     private Order order;
     
+    @FXML
+    private Label txtImporte;
+     
+    private AppConfig appConfig;
     /**
      * Método para inicializar el controlador.
      */
@@ -93,6 +89,7 @@ public class PedidosCrearModificarController extends PresentationLayer implement
     public void initialize(URL url, ResourceBundle rb) {
         Manager.getInstance().addController(this);
         this.order = ((PedidosController)Manager.getInstance().getController(PedidosController.class)).getSelectedOrder();
+        this.appConfig = ((AppConfigController)Manager.getInstance().getController(AppConfigController.class)).buildAppConfig();
         initView();
     }    
 
@@ -125,6 +122,8 @@ public class PedidosCrearModificarController extends PresentationLayer implement
         dateFechaLlegada.setValue(order.getRequiredDate().toLocalDateTime().toLocalDate());
         // Establecer la fecha de pedido en el campo de selección de fecha
         dateFechaPedido.setValue(order.getOrderDate().toLocalDateTime().toLocalDate());
+        
+        txtImporte.setText(String.format("%.2f €",((PedidosController)Manager.getInstance().getController(PedidosController.class)).getImporteTotal()));
     }
     
     /**
@@ -134,11 +133,25 @@ public class PedidosCrearModificarController extends PresentationLayer implement
     void onActionAceptar(ActionEvent event) {
         PedidosController controller = ((PedidosController)Manager.getInstance().getController(PedidosController.class));
         try {
+            if(CamposVacios()){
+                Utils.showInfoAlert("Debes rellenar todos los campos.");
+                return;
+            }
             this.ordersLogic = new OrdersLogic();
             if(order == null){
+                
                 Order newOrder = constructOrder();
+                if(hoursBetweenTwoDates(newOrder.getOrderDate(),newOrder.getRequiredDate()) < appConfig.getMinShippingHours()){
+                    Utils.showInfoAlert(String.format("La fecha entre el envío y la llegada han de ser de al menos %d horas.", appConfig.getMinShippingHours()));
+                    return;
+                }
                 List<Order> orders =  ordersLogic.getAll();
-                newOrder.setOrderNumber(orders.get(orders.size()-1).getOrderNumber()+1);
+                ObservableList<Order> observableOrders = ((PedidosController)Manager.getInstance().getController(PedidosController.class)).getObservableOrders();
+                int newOrderNumberFromObservableList = observableOrders.get(observableOrders.size()-1).getOrderNumber();
+                int newOrderNumberFromDatabase = orders.get(orders.size()-1).getOrderNumber();
+                
+                int newOrderNumber = Integer.max(newOrderNumberFromDatabase, newOrderNumberFromObservableList)+1;
+                newOrder.setOrderNumber(newOrderNumber);
                 controller.addItemToOrders(newOrder);
             }
             else{
@@ -148,12 +161,13 @@ public class PedidosCrearModificarController extends PresentationLayer implement
                 ordersLogic.update(newOrder);
             }
             this.ordersLogic.close();
-            close();
         } catch (LogicLayerException ex) {
             Utils.showErrorAlert("Error: " + ex.getMessage());
         }
     }
-
+    private int hoursBetweenTwoDates(Timestamp orderDate, Timestamp requiredDate){
+        return (int) Duration.between(requiredDate.toLocalDateTime(), orderDate.toLocalDateTime()).toHours();
+    }
     /**
      * * Construye un objeto Order
     */
@@ -172,6 +186,10 @@ public class PedidosCrearModificarController extends PresentationLayer implement
      */
     private Timestamp obtainTimeStamp(LocalDate date){
         return Timestamp.from(date.atStartOfDay().toInstant(ZoneOffset.UTC));
+    }
+
+    private boolean CamposVacios() {
+        return (dateFechaEnvio.getValue() == null || dateFechaLlegada.getValue() == null || dateFechaPedido.getValue() == null);
     }
     
 }

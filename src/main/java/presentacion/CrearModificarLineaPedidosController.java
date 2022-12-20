@@ -10,6 +10,7 @@ import aplicacion.Manager;
 import aplicacion.OrderDetailsLogic;
 import aplicacion.OrdersLogic;
 import aplicacion.ProductsLogic;
+import aplicacion.modelo.AppConfig;
 import aplicacion.modelo.Order;
 import aplicacion.modelo.OrderDetails;
 import aplicacion.modelo.Product;
@@ -17,16 +18,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 /**
  * Clase controladora para la creación y modificación de líneas de pedidos
@@ -47,10 +48,20 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
     @FXML
     private TextField editPrecioVenta;
 
+    @FXML
+    private Button btnCancel;
+
+    @FXML
+    public void onActionCancel(ActionEvent event) {
+        close();
+    }
+
     // Objeto OrderDetails que almacena la información de la línea de pedido
     private OrderDetails orderDetails;
     private ArrayList<Product> products;
     private PedidosController controller;
+    AppConfig appConfig;
+
     /**
      * Método para inicializar el controlador.
      */
@@ -67,7 +78,8 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
      */
     @Override
     public void close() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Stage stage = (Stage) this.btnCancel.getScene().getWindow();
+        stage.close();
     }
 
     /**
@@ -75,16 +87,17 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
      */
     private void initView() {
         try {
+            appConfig = ((AppConfigController) Manager.getInstance().getController(AppConfigController.class)).buildAppConfig();
             this.productsLogic = new ProductsLogic();
             products = (ArrayList<Product>) this.productsLogic.mostrarProductos();
             if (orderDetails == null) {
-                editCantidad.setText("");
+                editCantidad.setText(String.valueOf(appConfig.getDefaultQuantityOrdered()));
                 editPrecioVenta.setText("");
-                
+
                 List<String> productNames = products.stream().map(product -> product.getProductName()).collect(Collectors.toList());
-                
+
                 ObservableList observableProductsNames = FXCollections.observableArrayList(productNames);
-               comboCodProducto.setItems(observableProductsNames);
+                comboCodProducto.setItems(observableProductsNames);
                 this.productsLogic.close();
 
                 return;
@@ -92,15 +105,14 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
 
             editCantidad.setText(String.valueOf(orderDetails.getQuantityOrdered()));
             editPrecioVenta.setText(String.valueOf(orderDetails.getPriceEach()));
-            
+
             //Obtener el nombre del producto basado en la ID
-            
             String name = products.stream()
-                                    .filter(product -> product.getProductCode() == orderDetails.getProductCode())
-                                    .findFirst()
-                                    .get()
-                                    .getProductName();
-            
+                    .filter(product -> product.getProductCode() == orderDetails.getProductCode())
+                    .findFirst()
+                    .get()
+                    .getProductName();
+
             comboCodProducto.getItems().add(name);
             comboCodProducto.getSelectionModel().selectFirst();
             comboCodProducto.setDisable(true);
@@ -116,21 +128,38 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
     @FXML
     void onActionAccept(ActionEvent event) {
         try {
+            if (CamposVacios() || !Utils.isNumeric(editCantidad.getText()) || !Utils.isNumeric(editPrecioVenta.getText())) {
+                Utils.showInfoAlert("No deben haber campos vacíos o valores no válidos");
+                return;
+            }
             OrderDetails newOrderDetails = constructOrderDetails();
             this.orderDetailsLogic = new OrderDetailsLogic();
             this.ordersLogic = new OrdersLogic();
-            
+
             if (orderDetails == null) {
+                if (!controller.getObservableDetails().filtered(detail -> detail.getProductCode() == newOrderDetails.getProductCode()).isEmpty()) {
+                    Utils.showInfoAlert("Este producto ya se encuentra en la lista.");
+                    return;
+                }
+
+                if (controller.getObservableDetails().size() + 1 > appConfig.getMaxLinesPerOrder()) {
+                    Utils.showInfoAlert(String.format("Has alcanzado el límite máximo de lineas de pedido especificadas en la configuración de la aplicación (%d)", appConfig.getMaxLinesPerOrder()));
+                    return;
+                }
+
+                checkMaxOrderAmount();
                 controller.addItemToOrderDetails(newOrderDetails);
                 Order selectedOrder = controller.getSelectedOrder();
                 selectedOrder.addOrderDetailsToOrder(newOrderDetails);
-                
-                if(selectedOrder.getOrderDetails().size() == 1) ordersLogic.save(selectedOrder);
-                orderDetailsLogic.save(newOrderDetails);
-                
 
-                    
+                if (selectedOrder.getOrderDetails().size() == 1) {
+                    ordersLogic.save(selectedOrder);
+                }
+
+                orderDetailsLogic.save(newOrderDetails);
+
             } else {
+                checkMaxOrderAmount();
                 orderDetailsLogic.update(newOrderDetails);
                 controller.modifyItemOfOrderDetails(orderDetails, newOrderDetails);
             }
@@ -140,12 +169,26 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
         }
     }
 
+    private void checkMaxOrderAmount() {
+        if (Integer.parseInt(editCantidad.getText()) >= appConfig.getMaxOrderAmount()) {
+            Utils.showInfoAlert(String.format("Has superado la cantidad máxima para este producto. La cantidad máxima es %.0f", appConfig.getMaxOrderAmount()));
+            return;
+        }
+    }
+
+    @FXML
+    void onActionComboProductSelected(ActionEvent event) {
+        Product selectedProduct = products.stream().filter(product -> product.getProductName().equals(comboCodProducto.getSelectionModel().getSelectedItem())).findFirst().get();
+        float precioDeVenta = (selectedProduct.getBuyPrice() + selectedProduct.getBuyPrice() * appConfig.getDefaultProductBanefit() / 100);
+        editPrecioVenta.setText(String.valueOf(precioDeVenta));
+    }
+
     private OrderDetails constructOrderDetails() {
-        
+
         int productCode = products.stream().filter(product -> product.getProductName().equals(comboCodProducto.getSelectionModel().getSelectedItem()))
-                                    .findFirst()
-                                    .get()
-                                    .getProductCode();
+                .findFirst()
+                .get()
+                .getProductCode();
         return new OrderDetails(
                 controller.getSelectedOrder().getOrderNumber(),
                 productCode,
@@ -153,5 +196,9 @@ public class CrearModificarLineaPedidosController extends PresentationLayer impl
                 Float.parseFloat(editPrecioVenta.getText()),
                 0
         );
+    }
+
+    private boolean CamposVacios() {
+        return (comboCodProducto.getSelectionModel().getSelectedItem() == null || editCantidad.getText().isBlank() || editPrecioVenta.getText().isBlank());
     }
 }

@@ -81,6 +81,7 @@ public class OrdersDAO extends DataLayer implements DAOInterface<Order>{
         if(rs.next()){
             rs.last();
             orderNumber = rs.getInt("orderNumber")+1;
+            if(orderNumber < order.getOrderNumber()) orderNumber = order.getOrderNumber();
         }
         rs.moveToInsertRow();
         rs.updateInt("orderNumber", orderNumber);

@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="400.0" minWidth="200.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentacion.PedidosCrearModificarController">
    <children>
@@ -52,6 +53,14 @@
                <padding>
                   <Insets bottom="16.0" top="16.0" />
                </padding>
+               <children>
+                  <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Importe:" HBox.hgrow="ALWAYS">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="txtImporte" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="0,00 €" HBox.hgrow="ALWAYS" />
+               </children>
             </HBox>
             <HBox alignment="CENTER" spacing="48.0" VBox.vgrow="ALWAYS">
                <children>
