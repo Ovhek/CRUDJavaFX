@@ -20,6 +20,11 @@ public class PrimaryController extends PresentationLayer implements Initializabl
 
     }
 
+    /**
+     * Método que se ejecuta al inicializar el controlador.
+     * @param url URL del recurso.
+     * @param rb Bundle de recursos.
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         Manager.getInstance().addController(this);

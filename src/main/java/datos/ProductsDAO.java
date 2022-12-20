@@ -118,17 +118,24 @@ public class ProductsDAO extends DataLayer implements DAOInterface<Product> {
     }
 
     public Product getByProductCode(String productCode) throws SQLException {
+        //abrir conexion
+        this.createConection();
+        //Creamos un objeto producto que sera el que devolvamos
         Product ret = new Product();
-        
+        //Creamos sentencia
         Statement sentencia;
-        
+        //Ejecutamos la consulta
         sentencia = this.getCon().createStatement();
         sentencia.execute("SELECT * FROM products WHERE productCode = '" + productCode+"'");
         ResultSet rs = sentencia.getResultSet();
+        //Lo guardamos en ret
         if(rs.next()){
             ret = new Product(rs.getInt("productCode"), rs.getString("productName"), rs.getString("productDescription"), rs.getInt("quantityInStock"), rs.getFloat("buyPrice"));
         }
         
+        //Cerrar conexion
+        con.close();
+        //Devolvemos el producto
         return ret;
     }
 
